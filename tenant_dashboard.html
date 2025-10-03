@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tenant Dashboard - Rentify</title>
+    <link rel="stylesheet" href="tenant_dashboard_style.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+  </head>
+  <body>
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <div class="logo">
+          <i class="fas fa-home"></i>
+          <span>Rentify</span>
+        </div>
+        <button class="close-btn" id="close-sidebar">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <ul class="sidebar-nav">
+        <li class="nav-item active" data-section="dashboard">
+          <i class="fas fa-th-large"></i>
+          <span>Dashboard</span>
+        </li>
+        <li class="nav-item" data-section="profile">
+          <i class="fas fa-user"></i>
+          <span>Profile</span>
+        </li>
+        <li class="nav-item" data-section="my-lease">
+          <i class="fas fa-file-contract"></i>
+          <span>My Lease</span>
+        </li>
+        <li class="nav-item" data-section="rent-payment">
+          <i class="fas fa-money-bill-wave"></i>
+          <span>Rent Payment</span>
+        </li>
+        <li class="nav-item" data-section="maintenance">
+          <i class="fas fa-tools"></i>
+          <span>Maintenance</span>
+        </li>
+        <li class="nav-item" data-section="documents">
+          <i class="fas fa-folder-open"></i>
+          <span>Documents</span>
+        </li>
+        <li class="nav-item" data-section="settings">
+          <i class="fas fa-cog"></i>
+          <span>Settings</span>
+        </li>
+      </ul>
+    </aside>
+
+    <main class="main-content">
+      <header class="header">
+        <div class="header-left">
+          <button class="menu-toggle" id="menu-toggle">
+            <i class="fas fa-bars"></i>
+          </button>
+          <h1 class="page-title">Tenant Dashboard</h1>
+        </div>
+
+        <div class="header-right">
+          <div class="search-bar">
+            <i class="fas fa-search"></i>
+            <input type="text" placeholder="Search..." />
+          </div>
+
+          <div class="notifications">
+            <button class="notification-btn">
+              <i class="fas fa-bell"></i>
+              <span class="notification-badge">2</span>
+            </button>
+          </div>
+
+          <div class="user-profile">
+            <img
+              src="https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y"
+              alt="User"
+              class="profile-img"
+            />
+            <span class="username" id="user-name">Loading...</span>
+            <button
+              class="btn btn-danger btn-sm"
+              id="logout-btn"
+              style="margin-left: 1rem"
+              onclick="handleLogout()"
+            >
+              <i class="fas fa-sign-out-alt"></i> Logout
+            </button>
+          </div>
+        </div>
+      </header>
+
+      <section class="content-section active" id="dashboard-section">
+        <div class="dashboard-content">
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-icon">
+                <i class="fas fa-calendar-alt"></i>
+              </div>
+              <div class="stat-info">
+                <h3>Oct 10, 2024</h3>
+                <p>Next Rent Due</p>
+                <span class="stat-change warning">
+                  <i class="fas fa-clock"></i> 7 days left
+                </span>
+              </div>
+            </div>
+
+            <div class="stat-card">
+              <div
+                class="stat-icon"
+                style="background: linear-gradient(135deg, #27ae60, #2ecc71)"
+              >
+                <i class="fas fa-dollar-sign"></i>
+              </div>
+              <div class="stat-info">
+                <h3>$1,250.00</h3>
+                <p>Monthly Rent</p>
+                <span class="stat-change positive">
+                  <i class="fas fa-check"></i> AutoPay Active
+                </span>
+              </div>
+            </div>
+
+            <div class="stat-card">
+              <div
+                class="stat-icon"
+                style="background: linear-gradient(135deg, #f39c12, #f1c40f)"
+              >
+                <i class="fas fa-tools"></i>
+              </div>
+              <div class="stat-info">
+                <h3>2</h3>
+                <p>Open Requests</p>
+                <span class="stat-change warning">
+                  <i class="fas fa-exclamation-triangle"></i> 1 in progress
+                </span>
+              </div>
+            </div>
+
+            <div class="stat-card">
+              <div
+                class="stat-icon"
+                style="background: linear-gradient(135deg, #3498db, #2980b9)"
+              >
+                <i class="fas fa-file-contract"></i>
+              </div>
+              <div class="stat-info">
+                <h3>6 Months</h3>
+                <p>Lease Remaining</p>
+                <span class="stat-change info">
+                  <i class="fas fa-history"></i> Expires April 2025
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div class="dashboard-grid">
+            <div class="dashboard-card action-card">
+              <h3>Quick Actions</h3>
+              <div class="action-buttons-grid">
+                <button
+                  class="btn btn-lg btn-primary"
+                  onclick="window.location.href='#rent-payment-section'"
+                >
+                  <i class="fas fa-credit-card"></i> Pay Rent
+                </button>
+                <button
+                  class="btn btn-lg btn-warning"
+                  onclick="window.location.href='#maintenance-section'"
+                >
+                  <i class="fas fa-wrench"></i> Submit Maintenance
+                </button>
+                <button
+                  class="btn btn-lg btn-info"
+                  onclick="window.location.href='#documents-section'"
+                >
+                  <i class="fas fa-download"></i> Download Lease
+                </button>
+                <button
+                  class="btn btn-lg btn-secondary"
+                  onclick="window.location.href='#profile-section'"
+                >
+                  <i class="fas fa-user-edit"></i> Update Profile
+                </button>
+              </div>
+            </div>
+
+            <div class="dashboard-card">
+              <h3>Recent Payments</h3>
+              <div class="activities-list">
+                <div class="activity-item">
+                  <div class="activity-icon success">
+                    <i class="fas fa-check"></i>
+                  </div>
+                  <div class="activity-content">
+                    <p>
+                      <strong>Rent Paid: $1,250</strong>
+                      - September 2024
+                    </p>
+                    <span class="activity-time">Sep 30, 2024</span>
+                  </div>
+                </div>
+
+                <div class="activity-item">
+                  <div class="activity-icon success">
+                    <i class="fas fa-check"></i>
+                  </div>
+                  <div class="activity-content">
+                    <p>
+                      <strong>Rent Paid: $1,250</strong>
+                      - August 2024
+                    </p>
+                    <span class="activity-time">Aug 28, 2024</span>
+                  </div>
+                </div>
+
+                <div class="activity-item">
+                  <div class="activity-icon success">
+                    <i class="fas fa-check"></i>
+                  </div>
+                  <div class="activity-content">
+                    <p>
+                      <strong>Security Deposit Paid</strong>
+                      - $1,250.00
+                    </p>
+                    <span class="activity-time">Nov 1, 2023</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="content-section" id="profile-section">
+        <div class="section-header">
+          <h2>My Profile</h2>
+          <button class="btn btn-primary" onclick="openEditProfileModal()">
+            <i class="fas fa-edit"></i> Edit Profile
+          </button>
+        </div>
+
+        <div class="profile-details">
+          <div class="profile-card">
+            <h4>Contact Information</h4>
+            <p>
+              <strong>Name:</strong> <span id="profile-name">Loading...</span>
+            </p>
+            <p>
+              <strong>Email:</strong>
+              <span id="profile-email">Loading...</span>
+            </p>
+            <p>
+              <strong>Phone:</strong> <span id="profile-phone">Loading...</span>
+            </p>
+            <p><strong>D.O.B:</strong> <span id="profile-dob">N/A</span></p>
+            <p><strong>Tax ID:</strong> <span id="profile-tax-id">N/A</span></p>
+          </div>
+
+          <div class="profile-card">
+            <h4>Lease & Property Details</h4>
+            <p>
+              <strong>Property</strong>
+              <span id="profile-property">Loading...</span>
+            </p>
+            <p>
+              <strong>Unit</strong> <span id="profile-unit">Loading...</span>
+            </p>
+            <p>
+              <strong>Lease Term</strong>
+              <span id="profile-lease-term">Loading...</span>
+            </p>
+            <p>
+              <strong>Move-In Date</strong>
+              <span id="profile-move-in">Loading...</span>
+            </p>
+          </div>
+
+          <div class="profile-card">
+            <h4>Emergency & Address</h4>
+            <p>
+              <strong>Emerg. Contact Phone:</strong>
+              <span id="profile-emergency-phone">N/A</span>
+            </p>
+            <p>
+              <strong>Permanent Address:</strong>
+              <span id="profile-permanent-address">N/A</span>
+            </p>
+            <p>
+              <strong>Previous Address:</strong>
+              <span id="profile-previous-address">N/A</span>
+            </p>
+          </div>
+        </div>
+
+        <div id="edit-profile-modal" class="modal">
+          <div class="modal-content">
+            <span class="close-btn" onclick="closeEditProfileModal()"
+              >&times;</span
+            >
+            <h3>Edit Profile</h3>
+            <form id="profile-edit-form">
+              <div
+                id="profile-status-message"
+                class="status-message"
+                style="display: none"
+              ></div>
+
+              <div class="input-group">
+                <label for="profile-edit-name">Full Name</label>
+                <input type="text" id="profile-edit-name" required />
+              </div>
+
+              <div class="input-group">
+                <label for="profile-edit-email">Email Address</label>
+                <input type="email" id="profile-edit-email" disabled />
+              </div>
+
+              <div class="input-group">
+                <label for="profile-edit-phone">Phone Number</label>
+                <input type="tel" id="profile-edit-phone" />
+              </div>
+
+              <div class="input-group">
+                <label for="profile-edit-dob">Date of Birth</label>
+                <input type="date" id="profile-edit-dob" />
+              </div>
+
+              <div class="input-group">
+                <label for="profile-edit-tax-id">Tax ID (SSN/SIN/TIN)</label>
+                <input type="text" id="profile-edit-tax-id" />
+              </div>
+
+              <div class="input-group">
+                <label for="profile-edit-emergency-phone"
+                  >Emergency Contact Phone</label
+                >
+                <input type="tel" id="profile-edit-emergency-phone" />
+              </div>
+
+              <div class="input-group">
+                <label for="profile-edit-permanent-address"
+                  >Permanent Address</label
+                >
+                <textarea
+                  id="profile-edit-permanent-address"
+                  rows="3"
+                ></textarea>
+              </div>
+
+              <div class="input-group">
+                <label for="profile-edit-previous-address"
+                  >Previous Address</label
+                >
+                <textarea
+                  id="profile-edit-previous-address"
+                  rows="3"
+                ></textarea>
+              </div>
+
+              <div class="modal-actions">
+                <button
+                  type="button"
+                  class="btn btn-secondary btn-lg"
+                  onclick="closeEditProfileModal()"
+                >
+                  <i class="fas fa-chevron-left"></i> Back
+                </button>
+
+                <button
+                  type="submit"
+                  class="btn btn-primary btn-lg"
+                  id="save-profile-btn"
+                >
+                  <i class="fas fa-save"></i> Save Changes
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </section>
+
+      <section class="content-section" id="my-lease-section">
+        <div class="section-header">
+          <h2>My Lease</h2>
+          <button class="btn btn-info" onclick="requestLeaseRenewal()">
+            <i class="fas fa-redo"></i> Request Renewal
+          </button>
+        </div>
+
+        <div class="lease-document">
+          <h3>Current Lease Agreement</h3>
+          <p>Lease Period: **Oct 1, 2023 - Sep 30, 2024**</p>
+          <p>Monthly Rent: **$1,250** (Due 1st of every month)</p>
+          <p>Security Deposit: **$1,250**</p>
+          <p>**Status:** <span class="status-badge success">Active</span></p>
+          <div style="margin-top: 1rem">
+            <button class="btn btn-primary">
+              <i class="fas fa-download"></i> Download Full PDF
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <section class="content-section" id="rent-payment-section">
+        <div class="section-header">
+          <h2>Rent Payment</h2>
+        </div>
+
+        <div class="payment-overview">
+          <div class="payment-card due">
+            <i class="fas fa-calendar-check"></i>
+            <h3>$1,250.00</h3>
+            <p>Current Amount Due (October)</p>
+            <span class="payment-due-date">Due: Oct 10, 2024</span>
+          </div>
+
+          <div class="payment-card history">
+            <i class="fas fa-receipt"></i>
+            <h3>$15,000.00</h3>
+            <p>Total Paid This Lease Term</p>
+            <button class="btn btn-outline-dark btn-sm">
+              View Payment History
+            </button>
+          </div>
+        </div>
+
+        <div class="payment-options">
+          <h3>Pay Now</h3>
+          <button
+            class="btn btn-success btn-lg"
+            onclick="processPayment('full')"
+          >
+            <i class="fas fa-money-check-alt"></i> Pay Full Amount
+          </button>
+          <button
+            class="btn btn-secondary btn-lg"
+            onclick="openPartialPaymentModal()"
+          >
+            <i class="fas fa-money-bill"></i> Pay Partial Amount
+          </button>
+        </div>
+      </section>
+
+      <section class="content-section" id="maintenance-section">
+        <div class="section-header">
+          <h2>Maintenance Requests</h2>
+          <button class="btn btn-primary" onclick="openNewRequestModal()">
+            <i class="fas fa-plus"></i> Submit New Request
+          </button>
+        </div>
+
+        <div class="maintenance-list">
+          <div class="maintenance-item open">
+            <div class="request-details">
+              <h4>Leaking Faucet in Kitchen</h4>
+              <p class="request-meta">
+                Submitted: **Oct 1, 2024** | Priority:
+                <span class="priority-badge medium">Medium</span>
+              </p>
+              <p>Faucet drips constantly. Needs a new washer/cartridge.</p>
+            </div>
+            <div class="request-status">
+              <span class="status-badge warning">In Progress</span>
+              <button class="btn btn-primary btn-sm">View Updates</button>
+            </div>
+          </div>
+
+          <div class="maintenance-item resolved">
+            <div class="request-details">
+              <h4>Hallway Light Out</h4>
+              <p class="request-meta">
+                Submitted: **Sep 15, 2024** | Priority:
+                <span class="priority-badge low">Low</span>
+              </p>
+              <p>Bulb replacement needed for the ceiling fixture.</p>
+            </div>
+            <div class="request-status">
+              <span class="status-badge success">Resolved</span>
+              <button class="btn btn-outline-secondary btn-sm">
+                View Details
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="content-section" id="documents-section">
+        <div class="section-header">
+          <h2>Important Documents</h2>
+        </div>
+
+        <div class="documents-grid">
+          <div class="document-card">
+            <i class="fas fa-file-pdf"></i>
+            <h3>Lease Agreement 2023-2024</h3>
+            <p>Your current legally binding lease document.</p>
+            <button class="btn btn-primary">Download</button>
+          </div>
+          <div class="document-card">
+            <i class="fas fa-file-alt"></i>
+            <h3>Move-In Checklist</h3>
+            <p>Documentation of the unit's condition at move-in.</p>
+            <button class="btn btn-primary">Download</button>
+          </div>
+          <div class="document-card">
+            <i class="fas fa-info-circle"></i>
+            <h3>Community Rules & Bylaws</h3>
+            <p>Guidelines and regulations for the property.</p>
+            <button class="btn btn-primary">Download</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="content-section" id="settings-section">
+        <div class="section-header">
+          <h2>Settings</h2>
+        </div>
+
+        <div class="settings-grid">
+          <div class="settings-card">
+            <i
+              class="fas fa-user-cog"
+              style="
+                font-size: 3rem;
+                color: var(--primary-color);
+                margin-bottom: 1rem;
+              "
+            ></i>
+            <h3>Account & Profile</h3>
+            <p>Update personal information and contact details</p>
+            <button class="btn btn-primary">Edit Profile</button>
+          </div>
+
+          <div class="settings-card">
+            <i
+              class="fas fa-bell"
+              style="
+                font-size: 3rem;
+                color: var(--info-color);
+                margin-bottom: 1rem;
+              "
+            ></i>
+            <h3>Notifications</h3>
+            <p>Manage email and SMS notification preferences</p>
+            <button class="btn btn-primary">Notification Settings</button>
+          </div>
+
+          <div class="settings-card">
+            <i
+              class="fas fa-credit-card"
+              style="
+                font-size: 3rem;
+                color: var(--success-color);
+                margin-bottom: 1rem;
+              "
+            ></i>
+            <h3>Payment Methods</h3>
+            <p>Add or update your payment methods for rent</p>
+            <button class="btn btn-primary">Manage Payments</button>
+          </div>
+
+          <div class="settings-card">
+            <i
+              class="fas fa-lock"
+              style="
+                font-size: 3rem;
+                color: var(--danger-color);
+                margin-bottom: 1rem;
+              "
+            ></i>
+            <h3>Security & Privacy</h3>
+            <p>Change password and manage security settings</p>
+            <button class="btn btn-primary">Security Settings</button>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+
+    <script src="app.js"></script>
+
+    <script src="tenant_dashboard.js"></script>
+  </body>
+</html>

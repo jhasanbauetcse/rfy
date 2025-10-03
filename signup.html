@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sign Up - Rentify</title>
+    <link rel="stylesheet" href="signup_style.css" />
+  </head>
+  <body>
+    <div class="signup-container">
+      <div class="signup-box">
+        <h2>Create Account</h2>
+        <p>Sign up to get started with Rentify</p>
+
+        <div class="role-selection">
+          <h3>I am a:</h3>
+          <div class="role-buttons">
+            <button type="button" class="role-btn" data-role="landlord">
+              Landlord
+            </button>
+            <button type="button" class="role-btn" data-role="tenant">
+              Tenant
+            </button>
+          </div>
+        </div>
+
+        <form id="signup-form">
+          <div class="input-group">
+            <label for="signup-name">Full Name</label>
+            <input
+              type="text"
+              id="signup-name"
+              name="signup-name"
+              placeholder="Enter your full name"
+              required
+            />
+          </div>
+
+          <div class="input-group">
+            <label for="signup-email">Email</label>
+            <input
+              type="email"
+              id="signup-email"
+              name="signup-email"
+              placeholder="Enter your email"
+              required
+            />
+          </div>
+
+          <div class="input-group">
+            <label for="signup-password">Password</label>
+            <input
+              type="password"
+              id="signup-password"
+              name="signup-password"
+              placeholder="Create a password"
+              required
+            />
+          </div>
+
+          <button type="submit" class="signup-btn">Sign Up</button>
+        </form>
+
+        <p class="login-link">
+          Already have an account? <a href="login.html">Login here</a>
+        </p>
+      </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+
+    <script src="app.js"></script>
+  </body>
+</html>
