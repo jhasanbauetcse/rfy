@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Tenant Dashboard • Rentify</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <!-- The stylesheet is now linked to the unified dashboard_style.css -->
+    <link rel="stylesheet" href="dashboard_style.css" />
+  </head>
+  <body>
+    <!-- Overlay for the mobile menu -->
+    <div class="overlay"></div>
+    <div class="layout">
+      <!-- Sidebar -->
+      <aside class="sidebar">
+        <div class="brand">
+          <div class="logo">🏠</div>
+          <div class="brand-text">Rentify</div>
+        </div>
+
+        <nav class="nav">
+          <a class="nav-link active" data-section="dashboard">
+            <span>📊</span>
+            <span>Dashboard</span>
+          </a>
+          <a class="nav-link" data-section="profile">
+            <span>👤</span>
+            <span>Profile</span>
+          </a>
+          <a class="nav-link" data-section="leases">
+            <span>📄</span>
+            <span>My Lease</span>
+          </a>
+          <a class="nav-link" data-section="maintenance">
+            <span>🔧</span>
+            <span>Maintenance</span>
+          </a>
+          <a class="nav-link" data-section="payments">
+            <span>💳</span>
+            <span>Rent Payment</span>
+          </a>
+        </nav>
+      </aside>
+
+      <!-- Main -->
+      <main class="main">
+        <header class="topbar">
+          <div class="topbar-left">
+            <!-- Hamburger menu button for mobile -->
+            <button class="menu-toggle" id="menuToggle" aria-label="Open menu">
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <div>
+              <h1 class="title">
+                Welcome, <span id="tenantName">Tenant</span>
+              </h1>
+              <div class="sub">
+                All your homes, payments and requests in one place.
+              </div>
+            </div>
+          </div>
+          <div class="topbar-actions">
+            <button id="logoutBtn" class="logout">Log out</button>
+          </div>
+        </header>
+
+        <!-- DASHBOARD -->
+        <section id="section-dashboard" class="section active">
+          <div class="cards">
+            <div class="card">
+              <div class="card-label">Next Rent Due</div>
+              <div class="card-value" id="nextDue">—</div>
+              <div class="card-meta" id="nextDueLease">—</div>
+            </div>
+            <div class="card">
+              <div class="card-label">Monthly Rent (All Leases)</div>
+              <div class="card-value" id="monthlyRentTotal">—</div>
+              <div class="card-meta" id="currencyNote">৳ BDT</div>
+            </div>
+            <div class="card">
+              <div class="card-label">Open Maintenance</div>
+              <div class="card-value" id="openMaintCount">—</div>
+              <div class="card-meta" id="lastMaintUpdate">—</div>
+            </div>
+          </div>
+
+          <h2 class="h2">Quick actions</h2>
+          <div id="quickActions" class="qa-grid">
+            <!-- Filled by JS -->
+          </div>
+        </section>
+
+        <!-- PROFILE -->
+        <section id="section-profile" class="section">
+          <div class="panel">
+            <div class="panel-head">
+              <h2 class="h2">Profile Details</h2>
+              <button class="btn" id="editProfileBtn">Edit Profile</button>
+            </div>
+            <div class="kv">
+              <div><span>Name</span><strong id="pName">—</strong></div>
+              <div><span>Email</span><strong id="pEmail">—</strong></div>
+              <div><span>Phone</span><strong id="pPhone">—</strong></div>
+              <div><span>Date of Birth</span><strong id="pDob">—</strong></div>
+              <div class="kv-full">
+                <span>Permanent Address</span><strong id="pAddress">—</strong>
+              </div>
+              <div><span>Tax ID</span><strong id="pTaxId">—</strong></div>
+              <div><span>Role</span><strong>Tenant</strong></div>
+              <div>
+                <span>Member since</span><strong id="pCreated">—</strong>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- LEASES -->
+        <section id="section-leases" class="section">
+          <div class="panel">
+            <h2 class="h2">My Lease(s)</h2>
+            <div id="leasesList" class="list">
+              <!-- Filled by JS -->
+            </div>
+          </div>
+        </section>
+
+        <!-- MAINTENANCE -->
+        <section id="section-maintenance" class="section">
+          <div class="panel">
+            <div class="panel-head">
+              <h2 class="h2">Maintenance Requests</h2>
+              <button class="btn primary" id="newMaintBtn">New Request</button>
+            </div>
+            <div id="maintenanceList" class="list"></div>
+          </div>
+        </section>
+
+        <!-- PAYMENTS -->
+        <section id="section-payments" class="section">
+          <div class="panel">
+            <h2 class="h2">Rent Payments</h2>
+            <div id="paymentsList" class="list"></div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <!-- MODALS -->
+    <dialog id="editProfileDialog" class="modal">
+      <div class="modal-body">
+        <h3>Edit Profile</h3>
+        <form id="profileForm">
+          <div class="grid">
+            <div>
+              <label>Full Name</label>
+              <input type="text" id="profileName" required />
+            </div>
+            <div>
+              <label>Email Address</label>
+              <input type="email" id="profileEmail" required />
+            </div>
+          </div>
+          <div class="grid">
+            <div>
+              <label>Phone Number</label>
+              <input type="tel" id="profilePhone" />
+            </div>
+            <div>
+              <label>Date of Birth</label>
+              <input type="date" id="profileDob" />
+            </div>
+          </div>
+          <label>Permanent Address</label>
+          <textarea id="profileAddress" rows="2"></textarea>
+          <label>Tax ID</label>
+          <input type="text" id="profileTaxId" />
+          <div class="modal-actions">
+            <button class="btn ghost" type="button" id="cancelProfileEdit">
+              Cancel
+            </button>
+            <button class="btn primary" type="submit" id="profileSubmit">
+              Save Changes
+            </button>
+          </div>
+        </form>
+      </div>
+    </dialog>
+
+    <dialog id="payDialog" class="modal">
+      <div class="modal-body">
+        <h3>Pay Rent</h3>
+        <p class="muted" id="payLeaseLabel">—</p>
+        <form id="payForm">
+          <div class="grid">
+            <div>
+              <label>Amount (৳)</label>
+              <input type="number" id="payAmount" min="0" step="1" required />
+            </div>
+            <div>
+              <label>For Due Date</label>
+              <input type="date" id="payForDate" required />
+            </div>
+          </div>
+          <div class="modal-actions">
+            <button class="btn ghost" type="button" id="cancelPay">
+              Cancel
+            </button>
+            <button class="btn primary" type="submit" id="paySubmit">
+              Submit Payment
+            </button>
+          </div>
+        </form>
+      </div>
+    </dialog>
+
+    <dialog id="maintDialog" class="modal">
+      <div class="modal-body">
+        <h3>Submit Maintenance Request</h3>
+        <p class="muted" id="maintLeaseLabel">—</p>
+        <form id="maintForm">
+          <label>Issue Title</label>
+          <input
+            type="text"
+            id="maintTitle"
+            placeholder="e.g. Leaking sink, broken AC..."
+            required
+          />
+          <label>Details</label>
+          <textarea
+            id="maintDetails"
+            rows="4"
+            placeholder="Describe the issue, best time to access, etc."
+            required
+          ></textarea>
+          <div class="modal-actions">
+            <button class="btn ghost" type="button" id="cancelMaint">
+              Cancel
+            </button>
+            <button class="btn primary" type="submit" id="maintSubmit">
+              Submit
+            </button>
+          </div>
+        </form>
+      </div>
+    </dialog>
+
+    <!-- Firebase (compat) -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+
+    <!-- App logic -->
+    <script src="tenant_dashboard.js"></script>
+  </body>
+</html>
