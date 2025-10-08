@@ -101,7 +101,6 @@ auth.onAuthStateChanged(async (user) => {
     await loadPayments();
   } catch (e) {
     console.error(e);
-    alert("Unable to load tenant dashboard.");
   }
 });
 
