@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Landlord Dashboard • Rentify</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <!-- The stylesheet is now linked to the unified dashboard_style.css -->
+    <link rel="stylesheet" href="dashboard_style.css" />
+  </head>
+  <body>
+    <!-- Overlay for the mobile menu -->
+    <div class="overlay"></div>
+    <div class="layout">
+      <!-- Sidebar -->
+      <aside class="sidebar">
+        <div class="brand">
+          <div class="logo">🏠</div>
+          <div class="brand-text">Rentify</div>
+        </div>
+
+        <nav class="nav">
+          <a class="nav-link active" data-section="dashboard">
+            <span>📊</span>
+            <span>Dashboard</span>
+          </a>
+          <a class="nav-link" data-section="properties">
+            <span>🏢</span>
+            <span>Properties</span>
+          </a>
+          <a class="nav-link" data-section="tenants">
+            <span>👥</span>
+            <span>Tenants</span>
+          </a>
+          <a class="nav-link" data-section="maintenance">
+            <span>🔧</span>
+            <span>Maintenance</span>
+          </a>
+          <a class="nav-link" data-section="profile">
+            <span>👤</span>
+            <span>Profile</span>
+          </a>
+        </nav>
+      </aside>
+
+      <!-- Main -->
+      <main class="main">
+        <header class="topbar">
+          <div class="topbar-left">
+            <!-- Hamburger menu button for mobile -->
+            <button class="menu-toggle" id="menuToggle" aria-label="Open menu">
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <div>
+              <h1 class="title">
+                Welcome, <span id="landlordName">Landlord</span>
+              </h1>
+              <div class="sub">
+                Manage your properties, tenants, and requests efficiently.
+              </div>
+            </div>
+          </div>
+          <div class="topbar-actions">
+            <button id="logoutBtn" class="logout">Log out</button>
+          </div>
+        </header>
+
+        <!-- DASHBOARD -->
+        <section id="section-dashboard" class="section active">
+          <div class="cards">
+            <div class="card">
+              <div class="card-label">Total Monthly Rent</div>
+              <div class="card-value" id="monthlyRentCollected">—</div>
+              <div class="card-meta">From all properties</div>
+            </div>
+            <div class="card">
+              <div class="card-label">Occupancy Rate</div>
+              <div class="card-value" id="occupancyRate">—</div>
+              <div class="card-meta">%</div>
+            </div>
+            <div class="card">
+              <div class="card-label">Maintenance Requests Pending</div>
+              <div class="card-value" id="pendingMaintenance">—</div>
+              <div class="card-meta">Requests</div>
+            </div>
+          </div>
+
+          <h2 class="h2">Quick actions</h2>
+          <div id="quickActions" class="qa-grid"></div>
+        </section>
+
+        <!-- PROFILE -->
+        <section id="section-profile" class="section">
+          <div class="panel">
+            <h2 class="h2">Profile</h2>
+            <div class="kv">
+              <div><span>Name</span><strong id="pName">—</strong></div>
+              <div><span>Email</span><strong id="pEmail">—</strong></div>
+              <div><span>Phone</span><strong id="pPhone">—</strong></div>
+              <div><span>Role</span><strong>Landlord</strong></div>
+              <div>
+                <span>Member since</span><strong id="pCreated">—</strong>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- PROPERTIES -->
+        <section id="section-properties" class="section">
+          <div class="panel">
+            <div class="panel-head">
+              <h2 class="h2">My Properties</h2>
+              <button id="addPropertyBtn" class="btn primary">
+                Add Property
+              </button>
+            </div>
+            <div id="propertiesGrid" class="cards">
+              <!-- Property cards will be injected here by JS -->
+            </div>
+          </div>
+        </section>
+
+        <!-- TENANTS SECTION -->
+        <section id="section-tenants" class="section">
+          <div class="panel">
+            <div class="panel-head">
+              <h2 class="h2">Tenants</h2>
+              <button class="btn primary" id="addTenantBtn">Add Tenant</button>
+            </div>
+            <div id="tenantsList" class="list"></div>
+          </div>
+        </section>
+
+        <!-- MAINTENANCE REQUESTS -->
+        <section id="section-maintenance" class="section">
+          <div class="panel">
+            <h2 class="h2">Maintenance Requests</h2>
+            <div id="maintenanceList" class="list"></div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <!-- Add Tenant Modal -->
+    <dialog id="addTenantModal" class="modal">
+      <div class="modal-body">
+        <h3>Add Tenant</h3>
+        <form id="verifyTenantForm">
+          <label for="tenantEmail">Tenant Email</label>
+          <input type="email" id="tenantEmail" required />
+          <label for="tenantPhone">Tenant Phone</label>
+          <input type="tel" id="tenantPhone" required />
+          <div class="modal-actions">
+            <button type="button" class="btn ghost" id="cancelVerifyBtn">
+              Cancel
+            </button>
+            <button type="submit" class="btn primary">Verify Tenant</button>
+          </div>
+        </form>
+        <div id="addLeaseSection" class="hidden">
+          <hr
+            style="
+              border: none;
+              border-top: 1px solid var(--border-color);
+              margin: 24px 0;
+            "
+          />
+          <h4>Tenant Verified</h4>
+          <p id="verifiedTenantInfo" class="muted"></p>
+          <form id="addLeaseForm">
+            <label for="propertySelect">Select Property</label>
+            <select id="propertySelect" required></select>
+            <div class="grid">
+              <div>
+                <label for="leaseDate">Lease Start Date</label>
+                <input type="date" id="leaseDate" required />
+              </div>
+              <div>
+                <label for="rentAmount">Rent Amount</label>
+                <input type="number" id="rentAmount" required />
+              </div>
+            </div>
+            <label for="rentPayDate">Rent Paying Date of Month</label>
+            <input type="number" id="rentPayDate" min="1" max="31" required />
+            <div class="modal-actions">
+              <button type="button" class="btn ghost" id="cancelLeaseBtn">
+                Cancel
+              </button>
+              <button type="submit" class="btn primary">Add Lease</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </dialog>
+
+    <!-- Add Property Modal -->
+    <dialog id="addPropertyModal" class="modal">
+      <div class="modal-body">
+        <h3>Add New Property</h3>
+        <form id="addPropertyForm">
+          <label for="propertyAddress">Property Address</label>
+          <textarea
+            id="propertyAddress"
+            rows="3"
+            placeholder="e.g., House 123, Road 4, Block F, Banani, Dhaka"
+            required
+          ></textarea>
+          <div class="grid">
+            <div>
+              <label for="propertyRent">Monthly Rent (৳)</label>
+              <input
+                type="number"
+                id="propertyRent"
+                placeholder="e.g., 25000"
+              />
+            </div>
+            <div>
+              <label for="propertyBedrooms">Bedrooms</label>
+              <input
+                type="number"
+                id="propertyBedrooms"
+                placeholder="e.g., 3"
+              />
+            </div>
+          </div>
+          <div class="grid">
+            <div>
+              <label for="propertyBathrooms">Bathrooms</label>
+              <input
+                type="number"
+                id="propertyBathrooms"
+                placeholder="e.g., 2"
+              />
+            </div>
+            <div>
+              <label for="propertySqft">Area (sqft)</label>
+              <input type="number" id="propertySqft" placeholder="e.g., 1200" />
+            </div>
+          </div>
+          <label for="propertyDetails">Other Details</label>
+          <textarea
+            id="propertyDetails"
+            rows="4"
+            placeholder="e.g., Balcony, utilities info, etc."
+          ></textarea>
+          <div class="modal-actions">
+            <button type="button" class="btn ghost" id="cancelAddPropertyBtn">
+              Cancel
+            </button>
+            <button type="submit" class="btn primary">Save Property</button>
+          </div>
+        </form>
+      </div>
+    </dialog>
+
+    <!-- Property Details Modal -->
+    <dialog id="propertyDetailsModal" class="modal">
+      <div class="modal-body">
+        <h3 id="detailsAddress">Property Details</h3>
+        <div class="kv">
+          <div>
+            <span>Monthly Rent</span><strong id="detailsRent">—</strong>
+          </div>
+          <div>
+            <span>Bedrooms</span><strong id="detailsBedrooms">—</strong>
+          </div>
+          <div>
+            <span>Bathrooms</span><strong id="detailsBathrooms">—</strong>
+          </div>
+          <div><span>Area (sqft)</span><strong id="detailsSqft">—</strong></div>
+        </div>
+        <h4 class="h2" style="margin-top: 20px">Other Details</h4>
+        <p id="detailsOther" class="muted" style="margin-top: 4px">
+          No additional details provided.
+        </p>
+        <div class="modal-actions">
+          <button type="button" class="btn ghost" id="closeDetailsBtn">
+            Close
+          </button>
+        </div>
+      </div>
+    </dialog>
+
+    <!-- Firebase (compat) -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+
+    <!-- App logic -->
+    <script src="landlord_dashboard.js"></script>
+  </body>
+</html>
