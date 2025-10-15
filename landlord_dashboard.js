@@ -56,6 +56,8 @@ const fmtDate = (d) => {
 const addTenantModal = $("#addTenantModal");
 const addPropertyModal = $("#addPropertyModal");
 const propertyDetailsModal = $("#propertyDetailsModal");
+const addAnnouncementModal = $("#addAnnouncementModal");
+const specificTenantsListWrapper = $("#specificTenantsListWrapper");
 
 /* ---------------- State ---------------- */
 let currentUser = null;
@@ -63,6 +65,7 @@ let landlordProfile = null;
 let properties = [];
 let tenants = [];
 let maintenanceRequests = [];
+let announcements = [];
 let verifiedTenant = null;
 
 /* ---------------- Auth guard (landlord only) ---------------- */
@@ -104,6 +107,7 @@ async function loadData() {
   await loadProperties();
   await loadTenants();
   await loadMaintenanceRequests();
+  await loadAnnouncements();
 }
 
 /* ---------------- Load Properties ---------------- */
@@ -115,7 +119,6 @@ async function loadProperties() {
     .get();
   propSnap.forEach((d) => properties.push({ id: d.id, ...d.data() }));
 
-  // Card stats
   const totalRent = properties.reduce(
     (acc, p) => acc + (Number(p.rentAmount) || 0),
     0
@@ -147,8 +150,11 @@ function renderProperties() {
     div.className = "card";
     div.innerHTML = `
           <div class="card-label" style="font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${
-            p.address
+            p.propertyName || p.address
           }</div>
+           <div class="card-meta" style="font-size: 14px;">${p.address} ${
+      p.unit ? `(Unit ${p.unit})` : ""
+    }</div>
           <div class="card-value">${fmtMoney(p.rentAmount)}</div>
           <div class="card-meta">
               ${p.bedrooms || "N/A"} beds • ${p.bathrooms || "N/A"} baths
@@ -179,6 +185,8 @@ $("#addPropertyForm").addEventListener("submit", async (e) => {
   e.preventDefault();
   const propertyData = {
     landlordId: currentUser.uid,
+    propertyName: $("#propertyName").value,
+    unit: $("#propertyUnit").value,
     address: $("#propertyAddress").value,
     rentAmount: Number($("#propertyRent").value) || 0,
     bedrooms: Number($("#propertyBedrooms").value) || 0,
@@ -192,7 +200,7 @@ $("#addPropertyForm").addEventListener("submit", async (e) => {
   try {
     await db.collection("properties").add(propertyData);
     addPropertyModal.close();
-    await loadProperties(); // Refresh the properties list
+    await loadProperties();
   } catch (error) {
     console.error("Error adding property: ", error);
     alert("Failed to add property. Please try again.");
@@ -211,6 +219,8 @@ $("#propertiesGrid").addEventListener("click", (e) => {
 
 function showPropertyDetails(prop) {
   $("#detailsAddress").textContent = prop.address;
+  $("#detailsName").textContent = prop.propertyName || "—";
+  $("#detailsUnit").textContent = prop.unit || "—";
   $("#detailsRent").textContent = fmtMoney(prop.rentAmount);
   $("#detailsBedrooms").textContent = prop.bedrooms || "—";
   $("#detailsBathrooms").textContent = prop.bathrooms || "—";
@@ -228,15 +238,15 @@ $("#closeDetailsBtn").addEventListener("click", () => {
 function renderQuickActions() {
   const wrap = $("#quickActions");
   wrap.innerHTML = `
-          <button class="qa" id="quickAddProperty">
-          <div class="qa-title">Add Property</div>
-          <div class="qa-meta">Add new properties to your portfolio</div>
-          </button>
-          <button class="qa" id="quickAddTenant">
-          <div class="qa-title">Add Tenant</div>
-          <div class="qa-meta">Onboard a new tenant to a property</div>
-          </button>
-      `;
+      <button class="qa" id="quickAddProperty">
+      <div class="qa-title">Add Property</div>
+      <div class="qa-meta">Add new properties to your portfolio</div>
+      </button>
+      <button class="qa" id="quickAddTenant">
+      <div class="qa-title">Add Tenant</div>
+      <div class="qa-meta">Onboard a new tenant to a property</div>
+      </button>
+  `;
   $("#quickAddProperty").addEventListener("click", () => {
     addPropertyModal.showModal();
   });
@@ -276,16 +286,17 @@ async function loadTenants() {
 
   tenants.forEach((t) => {
     const property = properties.find((p) => p.id === t.propertyId);
+    const propertyIdentifier = property
+      ? `${property.propertyName} (Unit ${property.unit || "N/A"})`
+      : "Not Assigned";
     const div = document.createElement("div");
     div.className = "tenant-card";
     div.innerHTML = `
-              <h4>${t.fullName || "Tenant"}</h4>
-              <p><strong>Email:</strong> ${t.email || "—"}</p>
-              <p><strong>Property:</strong> ${
-                property ? property.address : "Not Assigned"
-              }</p>
-              <p><strong>Rent Amount:</strong> ${fmtMoney(t.rentAmount)}</p>
-          `;
+          <h4>${t.fullName || "Tenant"}</h4>
+          <p><strong>Email:</strong> ${t.email || "—"}</p>
+          <p><strong>Property:</strong> ${propertyIdentifier}</p>
+          <p><strong>Rent Amount:</strong> ${fmtMoney(t.rentAmount)}</p>
+      `;
     list.appendChild(div);
   });
 }
@@ -303,6 +314,10 @@ async function loadMaintenanceRequests() {
     maintenanceRequests.push({ id: doc.id, ...doc.data() });
   });
 
+  maintenanceRequests.sort(
+    (a, b) => (b.createdAt?.toDate() || 0) - (a.createdAt?.toDate() || 0)
+  );
+
   $("#pendingMaintenance").textContent = maintenanceRequests.filter(
     (r) => r.status === "open"
   ).length;
@@ -312,29 +327,170 @@ async function loadMaintenanceRequests() {
     return;
   }
 
-  maintenanceRequests.forEach(async (req) => {
+  for (const req of maintenanceRequests) {
     const tenant = tenants.find((t) => t.id === req.tenantId);
     const property = properties.find((p) => p.id === req.propertyId);
+    const propertyIdentifier = property
+      ? `${property.propertyName} (Unit ${property.unit || "N/A"})`
+      : "N/A";
     const div = document.createElement("div");
     div.className = "list-item";
     div.innerHTML = `
-          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
-              <div>
-                  <strong>${req.title}</strong>
-                  <p class="muted" style="margin: 4px 0 0;">
-                      Tenant: ${tenant ? tenant.fullName : "N/A"} •
-                      Property: ${property ? property.address : "N/A"} •
-                      Reported: ${fmtDate(req.createdAt)}
-                  </p>
-              </div>
-              <span class="muted" style="text-transform: capitalize; flex-shrink: 0;">${
-                req.status
-              }</span>
+      <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+          <div>
+              <strong>${req.title}</strong>
+              <p class="muted" style="margin: 4px 0 0;">
+                  Tenant: ${tenant ? tenant.fullName : "N/A"} •
+                  Property: ${propertyIdentifier} •
+                  Reported: ${fmtDate(req.createdAt)}
+              </p>
           </div>
-          `;
+          <span class="muted" style="text-transform: capitalize; flex-shrink: 0;">${
+            req.status
+          }</span>
+      </div>
+    `;
     list.appendChild(div);
+  }
+}
+
+/* ---------------- Announcements Logic ---------------- */
+async function loadAnnouncements() {
+  const list = $("#announcementsList");
+  list.innerHTML = "";
+  announcements = [];
+  const snap = await db
+    .collection("announcements")
+    .where("landlordId", "==", currentUser.uid)
+    .get();
+  snap.forEach((doc) => announcements.push({ id: doc.id, ...doc.data() }));
+
+  announcements.sort(
+    (a, b) => (b.createdAt?.toDate() || 0) - (a.createdAt?.toDate() || 0)
+  );
+
+  renderAnnouncements();
+}
+
+function renderAnnouncements() {
+  const list = $("#announcementsList");
+  if (!announcements.length) {
+    list.innerHTML = `<div class="list-item">You have not sent any announcements.</div>`;
+    return;
+  }
+
+  list.innerHTML = announcements
+    .map(
+      (a) => `
+        <div class="list-item">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <strong>${a.title}</strong>
+                <span class="muted">${fmtDate(a.createdAt)}</span>
+            </div>
+            <p class="muted" style="margin-top: 8px; white-space: pre-wrap;">${
+              a.details
+            }</p>
+        </div>
+    `
+    )
+    .join("");
+}
+
+function populateTenantSelector() {
+  specificTenantsListWrapper.innerHTML = ""; // Clear previous list
+  if (!tenants.length) {
+    specificTenantsListWrapper.innerHTML = `<p class="muted">No tenants found to select from.</p>`;
+    return;
+  }
+
+  tenants.forEach((t) => {
+    const property = properties.find((p) => p.id === t.propertyId);
+    const address = property
+      ? `${property.propertyName} - Unit ${property.unit || "N/A"}`
+      : "Unassigned";
+    const div = document.createElement("div");
+    div.innerHTML = `
+      <label style="display: flex; align-items: center; gap: 8px; font-weight: normal; margin: 8px 0;">
+        <input type="checkbox" value="${
+          t.id
+        }" class="tenant-select-checkbox" style="width: auto;">
+        <span>${
+          t.fullName || "Tenant"
+        } (<span class="muted">${address}</span>)</span>
+      </label>
+    `;
+    specificTenantsListWrapper.appendChild(div);
   });
 }
+
+document.querySelectorAll('input[name="recipientType"]').forEach((radio) => {
+  radio.addEventListener("change", (e) => {
+    if (e.target.value === "specific") {
+      specificTenantsListWrapper.classList.remove("hidden");
+    } else {
+      specificTenantsListWrapper.classList.add("hidden");
+    }
+  });
+});
+
+$("#addAnnouncementBtn").addEventListener("click", () => {
+  populateTenantSelector(); // Populate the list when modal is opened
+  addAnnouncementModal.showModal();
+});
+
+$("#cancelAddAnnouncementBtn").addEventListener("click", () => {
+  addAnnouncementModal.close();
+});
+
+addAnnouncementModal.addEventListener("close", () => {
+  $("#addAnnouncementForm").reset();
+  document.querySelector(
+    'input[name="recipientType"][value="all"]'
+  ).checked = true;
+  specificTenantsListWrapper.classList.add("hidden");
+});
+
+$("#addAnnouncementForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const title = $("#announcementTitle").value.trim();
+  const details = $("#announcementDetails").value.trim();
+  const recipientType = document.querySelector(
+    'input[name="recipientType"]:checked'
+  ).value;
+
+  if (!title || !details) {
+    alert("Please fill out both title and details.");
+    return;
+  }
+
+  const payload = {
+    landlordId: currentUser.uid,
+    title,
+    details,
+    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+    recipientType: recipientType,
+  };
+
+  if (recipientType === "specific") {
+    const selectedTenants = [
+      ...document.querySelectorAll(".tenant-select-checkbox:checked"),
+    ].map((cb) => cb.value);
+    if (selectedTenants.length === 0) {
+      alert("Please select at least one tenant.");
+      return;
+    }
+    payload.recipientIds = selectedTenants;
+  }
+
+  try {
+    await db.collection("announcements").add(payload);
+    addAnnouncementModal.close();
+    await loadAnnouncements();
+  } catch (error) {
+    console.error("Error adding announcement: ", error);
+    alert("Failed to send announcement.");
+  }
+});
 
 /* ---------------- Add Tenant Modal Logic ---------------- */
 const verifyTenantForm = $("#verifyTenantForm");
@@ -381,9 +537,13 @@ verifyTenantForm.addEventListener("submit", async (e) => {
   addLeaseSection.classList.remove("hidden");
   verifyTenantForm.classList.add("hidden");
 
-  // Populate properties
   propertySelect.innerHTML = properties
-    .map((p) => `<option value="${p.id}">${p.address}</option>`)
+    .map(
+      (p) =>
+        `<option value="${p.id}">${p.propertyName} - Unit ${
+          p.unit || "N/A"
+        }</option>`
+    )
     .join("");
 });
 
