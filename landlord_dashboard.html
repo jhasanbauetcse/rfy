@@ -9,46 +9,74 @@
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
-    <!-- The stylesheet is now linked to the unified dashboard_style.css -->
     <link rel="stylesheet" href="dashboard_style.css" />
   </head>
   <body>
-    <!-- Overlay for the mobile menu -->
     <div class="overlay"></div>
     <div class="layout">
       <!-- Sidebar -->
       <aside class="sidebar">
-        <div class="brand"></div>
+        <div>
+          <div class="brand">
+            <!-- Brand content here -->
+          </div>
 
-        <nav class="nav">
-          <a class="nav-link active" data-section="dashboard">
-            <span> </span>
-            <span>Dashboard</span>
-          </a>
-          <a class="nav-link" data-section="properties">
-            <span> </span>
-            <span>Properties</span>
-          </a>
-          <a class="nav-link" data-section="tenants">
-            <span> </span>
-            <span>Tenants</span>
-          </a>
-          <a class="nav-link" data-section="maintenance">
-            <span> </span>
-            <span>Maintenance</span>
-          </a>
-          <a class="nav-link" data-section="profile">
-            <span> </span>
-            <span>Profile</span>
-          </a>
-        </nav>
+          <nav class="nav">
+            <a class="nav-link active" data-section="dashboard">
+              <span></span>
+              <span>Dashboard</span>
+            </a>
+            <a class="nav-link" data-section="properties">
+              <span></span>
+              <span>Properties</span>
+            </a>
+            <a class="nav-link" data-section="tenants">
+              <span></span>
+              <span>Tenants</span>
+            </a>
+            <a class="nav-link" data-section="maintenance">
+              <span></span>
+              <span>Maintenance</span>
+            </a>
+            <a class="nav-link" data-section="announcements">
+              <span></span>
+              <span>Announcements</span>
+            </a>
+            <a class="nav-link" data-section="profile">
+              <span></span>
+              <span>Profile</span>
+            </a>
+          </nav>
+        </div>
+
+        <div class="sidebar-footer">
+          <button id="logoutBtn" class="logout-link">
+            <span>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                <polyline points="16 17 21 12 16 7"></polyline>
+                <line x1="21" y1="12" x2="9" y2="12"></line>
+              </svg>
+            </span>
+            <span>Log out</span>
+          </button>
+        </div>
       </aside>
 
       <!-- Main -->
       <main class="main">
         <header class="topbar">
           <div class="topbar-left">
-            <!-- Hamburger menu button for mobile -->
             <button class="menu-toggle" id="menuToggle" aria-label="Open menu">
               <span class="icon-bar"></span>
               <span class="icon-bar"></span>
@@ -64,7 +92,7 @@
             </div>
           </div>
           <div class="topbar-actions">
-            <button id="logoutBtn" class="logout">Log out</button>
+            <!-- Logout button was here -->
           </div>
         </header>
 
@@ -141,10 +169,25 @@
             <div id="maintenanceList" class="list"></div>
           </div>
         </section>
+
+        <!-- ANNOUNCEMENTS SECTION -->
+        <section id="section-announcements" class="section">
+          <div class="panel">
+            <div class="panel-head">
+              <h2 class="h2">Announcements</h2>
+              <button id="addAnnouncementBtn" class="btn primary">
+                Create Announcement
+              </button>
+            </div>
+            <div id="announcementsList" class="list">
+              <!-- Announcements will be loaded here by JS -->
+            </div>
+          </div>
+        </section>
       </main>
     </div>
 
-    <!-- Add Tenant Modal -->
+    <!-- Modals -->
     <dialog id="addTenantModal" class="modal">
       <div class="modal-body">
         <h3>Add Tenant</h3>
@@ -196,11 +239,29 @@
       </div>
     </dialog>
 
-    <!-- Add Property Modal -->
     <dialog id="addPropertyModal" class="modal">
       <div class="modal-body">
         <h3>Add New Property</h3>
         <form id="addPropertyForm">
+          <div class="grid">
+            <div>
+              <label for="propertyName">Property Name</label>
+              <input
+                type="text"
+                id="propertyName"
+                placeholder="e.g., Green Valley Apartments"
+                required
+              />
+            </div>
+            <div>
+              <label for="propertyUnit">Unit / Apt #</label>
+              <input
+                type="text"
+                id="propertyUnit"
+                placeholder="e.g., A1, Flat 2B"
+              />
+            </div>
+          </div>
           <label for="propertyAddress">Property Address</label>
           <textarea
             id="propertyAddress"
@@ -256,11 +317,16 @@
       </div>
     </dialog>
 
-    <!-- Property Details Modal -->
     <dialog id="propertyDetailsModal" class="modal">
       <div class="modal-body">
         <h3 id="detailsAddress">Property Details</h3>
         <div class="kv">
+          <div>
+            <span>Property Name</span><strong id="detailsName">—</strong>
+          </div>
+          <div>
+            <span>Unit / Apt #</span><strong id="detailsUnit">—</strong>
+          </div>
           <div>
             <span>Monthly Rent</span><strong id="detailsRent">—</strong>
           </div>
@@ -281,6 +347,65 @@
             Close
           </button>
         </div>
+      </div>
+    </dialog>
+
+    <dialog id="addAnnouncementModal" class="modal">
+      <div class="modal-body">
+        <h3>Create New Announcement</h3>
+        <form id="addAnnouncementForm">
+          <label>Send To</label>
+          <div class="recipient-options">
+            <label>
+              <input type="radio" name="recipientType" value="all" checked />
+              All Tenants
+            </label>
+            <label>
+              <input type="radio" name="recipientType" value="specific" />
+              Specific Tenants
+            </label>
+          </div>
+
+          <div
+            id="specificTenantsListWrapper"
+            class="hidden"
+            style="
+              margin-top: 16px;
+              max-height: 200px;
+              overflow-y: auto;
+              border: 1px solid var(--border-color);
+              border-radius: 8px;
+              padding: 12px;
+            "
+          >
+            <!-- Tenant checkboxes will be dynamically inserted here by JS -->
+          </div>
+
+          <label for="announcementTitle">Title</label>
+          <input
+            type="text"
+            id="announcementTitle"
+            placeholder="e.g., Water Supply Interruption"
+            required
+          />
+          <label for="announcementDetails">Details</label>
+          <textarea
+            id="announcementDetails"
+            rows="5"
+            placeholder="Provide details about the announcement..."
+            required
+          ></textarea>
+          <div class="modal-actions">
+            <button
+              type="button"
+              class="btn ghost"
+              id="cancelAddAnnouncementBtn"
+            >
+              Cancel
+            </button>
+            <button type="submit" class="btn primary">Send Announcement</button>
+          </div>
+        </form>
       </div>
     </dialog>
 
