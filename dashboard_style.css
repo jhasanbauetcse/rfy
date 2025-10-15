@@ -130,7 +130,7 @@ body {
   display: flex;
   align-items: center;
   gap: 12px;
-  min-width: 0; /* Prevents text from overflowing */
+  min-width: 0;
 }
 
 .topbar .title {
@@ -155,7 +155,7 @@ body {
   display: flex;
   align-items: center;
   gap: 12px;
-  flex-shrink: 0; /* Prevents buttons from shrinking */
+  flex-shrink: 0;
 }
 
 .section {
@@ -218,7 +218,7 @@ body {
   align-items: center;
   justify-content: space-between;
   margin-bottom: 20px;
-  flex-wrap: wrap; /* Allow wrapping on small screens */
+  flex-wrap: wrap;
   gap: 12px;
 }
 
@@ -241,7 +241,6 @@ body {
 }
 
 .kv {
-  /* Key-Value list */
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 12px;
@@ -278,7 +277,7 @@ body {
   cursor: pointer;
   font-family: "Inter", sans-serif;
   transition: background-color 0.2s ease, box-shadow 0.2s ease;
-  white-space: nowrap; /* Prevent buttons from wrapping text */
+  white-space: nowrap;
 }
 .btn:hover {
   background-color: #f9fafb;
@@ -367,6 +366,27 @@ body {
   justify-content: flex-end;
   gap: 12px;
   margin-top: 32px;
+}
+
+.recipient-options {
+  display: flex;
+  gap: 24px;
+  background-color: var(--bg-color);
+  padding: 10px;
+  border-radius: 8px;
+  margin-bottom: 8px;
+}
+.recipient-options label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  font-weight: 500;
+  color: var(--text-primary-color);
+  cursor: pointer;
+}
+.recipient-options input[type="radio"] {
+  width: auto;
 }
 
 /* ================= Mobile Menu & Overlay ================= */
@@ -476,7 +496,6 @@ body {
 
 /* ================= Responsive Design ================= */
 
-/* Tablet View: Collapsed sidebar */
 @media (max-width: 940px) {
   .layout {
     grid-template-columns: 80px 1fr;
@@ -490,7 +509,6 @@ body {
   }
 }
 
-/* Mobile View: Toggleable sidebar */
 @media (max-width: 768px) {
   .layout {
     grid-template-columns: 1fr;
@@ -498,7 +516,7 @@ body {
 
   .sidebar {
     position: fixed;
-    left: -260px; /* Hidden off-screen */
+    left: -260px;
     top: 0;
     height: 100%;
     z-index: 1000;
@@ -508,10 +526,9 @@ body {
   }
 
   .sidebar.active {
-    left: 0; /* Slide in when active */
+    left: 0;
   }
 
-  /* Make brand and nav text visible again inside the slide-out menu */
   .sidebar.active .brand-text,
   .sidebar.active .nav-link span:last-child {
     display: block;
@@ -521,7 +538,7 @@ body {
   }
 
   .menu-toggle {
-    display: block; /* Show the hamburger button */
+    display: block;
   }
 
   .main {
@@ -541,7 +558,6 @@ body {
   }
 }
 
-/* Small Mobile View: Further adjustments */
 @media (max-width: 480px) {
   .panel-head {
     flex-direction: column;

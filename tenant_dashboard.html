@@ -9,11 +9,9 @@
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
-    <!-- The stylesheet is now linked to the unified dashboard_style.css -->
     <link rel="stylesheet" href="dashboard_style.css" />
   </head>
   <body>
-    <!-- Overlay for the mobile menu -->
     <div class="overlay"></div>
     <div class="layout">
       <!-- Sidebar -->
@@ -22,24 +20,28 @@
 
         <nav class="nav">
           <a class="nav-link active" data-section="dashboard">
-            <span> </span>
+            <span></span>
             <span>Dashboard</span>
           </a>
           <a class="nav-link" data-section="profile">
-            <span> </span>
+            <span></span>
             <span>Profile</span>
           </a>
           <a class="nav-link" data-section="leases">
-            <span> </span>
+            <span></span>
             <span>My Lease</span>
           </a>
           <a class="nav-link" data-section="maintenance">
-            <span> </span>
+            <span></span>
             <span>Maintenance</span>
           </a>
           <a class="nav-link" data-section="payments">
-            <span> </span>
+            <span></span>
             <span>Rent Payment</span>
+          </a>
+          <a class="nav-link" data-section="announcements">
+            <span></span>
+            <span>Announcements</span>
           </a>
         </nav>
       </aside>
@@ -48,7 +50,6 @@
       <main class="main">
         <header class="topbar">
           <div class="topbar-left">
-            <!-- Hamburger menu button for mobile -->
             <button class="menu-toggle" id="menuToggle" aria-label="Open menu">
               <span class="icon-bar"></span>
               <span class="icon-bar"></span>
@@ -109,7 +110,7 @@
               <div class="kv-full">
                 <span>Permanent Address</span><strong id="pAddress">—</strong>
               </div>
-              <div><span>Tax ID</span><strong id="pTaxId">—</strong></div>
+              <div><span>National ID</span><strong id="pTaxId">—</strong></div>
               <div><span>Role</span><strong>Tenant</strong></div>
               <div>
                 <span>Member since</span><strong id="pCreated">—</strong>
@@ -146,10 +147,54 @@
             <div id="paymentsList" class="list"></div>
           </div>
         </section>
+
+        <!-- ANNOUNCEMENTS SECTION -->
+        <section id="section-announcements" class="section">
+          <div class="panel">
+            <h2 class="h2">Announcements from Landlord</h2>
+            <div id="announcementsList" class="list">
+              <!-- Announcements will be loaded here by JS -->
+            </div>
+          </div>
+        </section>
       </main>
     </div>
 
     <!-- MODALS -->
+    <!-- Property Details Modal -->
+    <dialog id="propertyDetailsModal" class="modal">
+      <div class="modal-body">
+        <h3 id="detailsAddress">Property Details</h3>
+        <div class="kv">
+          <div>
+            <span>Property Name</span><strong id="detailsName">—</strong>
+          </div>
+          <div>
+            <span>Unit / Apt #</span><strong id="detailsUnit">—</strong>
+          </div>
+          <div>
+            <span>Monthly Rent</span><strong id="detailsRent">—</strong>
+          </div>
+          <div>
+            <span>Bedrooms</span><strong id="detailsBedrooms">—</strong>
+          </div>
+          <div>
+            <span>Bathrooms</span><strong id="detailsBathrooms">—</strong>
+          </div>
+          <div><span>Area (sqft)</span><strong id="detailsSqft">—</strong></div>
+        </div>
+        <h4 class="h2" style="margin-top: 20px">Other Details</h4>
+        <p id="detailsOther" class="muted" style="margin-top: 4px">
+          No additional details provided.
+        </p>
+        <div class="modal-actions">
+          <button type="button" class="btn ghost" id="closeDetailsBtn">
+            Close
+          </button>
+        </div>
+      </div>
+    </dialog>
+
     <dialog id="editProfileDialog" class="modal">
       <div class="modal-body">
         <h3>Edit Profile</h3>
@@ -176,7 +221,7 @@
           </div>
           <label>Permanent Address</label>
           <textarea id="profileAddress" rows="2"></textarea>
-          <label>Tax ID</label>
+          <label>National ID</label>
           <input type="text" id="profileTaxId" />
           <div class="modal-actions">
             <button class="btn ghost" type="button" id="cancelProfileEdit">
