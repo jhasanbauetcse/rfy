@@ -52,7 +52,7 @@ body {
   padding: 24px 16px;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  justify-content: space-between; /* Pushes footer to bottom */
   transition: transform 0.3s ease-in-out;
 }
 
@@ -112,6 +112,45 @@ body {
   font-weight: 600;
 }
 
+.sidebar-footer {
+  padding-top: 16px;
+  margin-top: 16px;
+  border-top: 1px solid var(--border-color);
+}
+
+.logout-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 8px;
+  color: #44474b;
+  font-weight: 500;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
+  background-color: transparent;
+  border: none;
+  font-family: inherit;
+  font-size: inherit;
+  text-align: left;
+}
+
+.logout-link span:first-child {
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.logout-link:hover {
+  background-color: #ffe8e8;
+  color: #991b1b;
+}
+
 /* ================= Main Content ================= */
 .main {
   padding: 24px 32px;
@@ -130,7 +169,7 @@ body {
   display: flex;
   align-items: center;
   gap: 12px;
-  min-width: 0; /* Prevents text from overflowing */
+  min-width: 0;
 }
 
 .topbar .title {
@@ -155,7 +194,7 @@ body {
   display: flex;
   align-items: center;
   gap: 12px;
-  flex-shrink: 0; /* Prevents buttons from shrinking */
+  flex-shrink: 0;
 }
 
 .section {
@@ -218,7 +257,7 @@ body {
   align-items: center;
   justify-content: space-between;
   margin-bottom: 20px;
-  flex-wrap: wrap; /* Allow wrapping on small screens */
+  flex-wrap: wrap;
   gap: 12px;
 }
 
@@ -241,7 +280,6 @@ body {
 }
 
 .kv {
-  /* Key-Value list */
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 12px;
@@ -278,7 +316,7 @@ body {
   cursor: pointer;
   font-family: "Inter", sans-serif;
   transition: background-color 0.2s ease, box-shadow 0.2s ease;
-  white-space: nowrap; /* Prevent buttons from wrapping text */
+  white-space: nowrap;
 }
 .btn:hover {
   background-color: #f9fafb;
@@ -301,18 +339,6 @@ body {
 }
 .btn.ghost:hover {
   background-color: #f3f4f6;
-}
-
-.logout {
-  border: 1px solid var(--border-color);
-  background: var(--panel-bg-color);
-  font-weight: 600;
-  border-radius: 8px;
-  padding: 8px 12px;
-  cursor: pointer;
-}
-.logout:hover {
-  background: #f1f5f9;
 }
 
 /* ================= Modal ================= */
@@ -367,6 +393,27 @@ body {
   justify-content: flex-end;
   gap: 12px;
   margin-top: 32px;
+}
+
+.recipient-options {
+  display: flex;
+  gap: 24px;
+  background-color: var(--bg-color);
+  padding: 10px;
+  border-radius: 8px;
+  margin-bottom: 8px;
+}
+.recipient-options label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  font-weight: 500;
+  color: var(--text-primary-color);
+  cursor: pointer;
+}
+.recipient-options input[type="radio"] {
+  width: auto;
 }
 
 /* ================= Mobile Menu & Overlay ================= */
@@ -476,21 +523,21 @@ body {
 
 /* ================= Responsive Design ================= */
 
-/* Tablet View: Collapsed sidebar */
 @media (max-width: 940px) {
   .layout {
     grid-template-columns: 80px 1fr;
   }
   .brand-text,
-  .nav-link span:last-child {
+  .nav-link span:last-child,
+  .logout-link span:last-child {
     display: none;
   }
-  .nav-link {
+  .nav-link,
+  .logout-link {
     justify-content: center;
   }
 }
 
-/* Mobile View: Toggleable sidebar */
 @media (max-width: 768px) {
   .layout {
     grid-template-columns: 1fr;
@@ -498,7 +545,7 @@ body {
 
   .sidebar {
     position: fixed;
-    left: -260px; /* Hidden off-screen */
+    left: -260px;
     top: 0;
     height: 100%;
     z-index: 1000;
@@ -508,20 +555,21 @@ body {
   }
 
   .sidebar.active {
-    left: 0; /* Slide in when active */
+    left: 0;
   }
 
-  /* Make brand and nav text visible again inside the slide-out menu */
   .sidebar.active .brand-text,
-  .sidebar.active .nav-link span:last-child {
+  .sidebar.active .nav-link span:last-child,
+  .sidebar.active .logout-link span:last-child {
     display: block;
   }
-  .sidebar.active .nav-link {
+  .sidebar.active .nav-link,
+  .sidebar.active .logout-link {
     justify-content: flex-start;
   }
 
   .menu-toggle {
-    display: block; /* Show the hamburger button */
+    display: block;
   }
 
   .main {
@@ -541,7 +589,6 @@ body {
   }
 }
 
-/* Small Mobile View: Further adjustments */
 @media (max-width: 480px) {
   .panel-head {
     flex-direction: column;
