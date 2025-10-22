@@ -3,519 +3,177 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta
-      name="description"
-      content="Rentify - Modern rental management platform connecting landlords and tenants"
-    />
-    <title>Rentify - Simplifying Rental Management</title>
-    <link rel="stylesheet" href="landing_style.css" />
+    <title>Rentify - Stress-Free Rentals in Bangladesh</title>
+    <link rel="stylesheet" href="index_style.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap"
       rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
     />
   </head>
   <body>
-    <!-- Navigation Bar -->
-    <nav class="navbar">
-      <div class="nav-container">
-        <div class="logo">
-          <i class="fas fa-home"></i>
-          <span>Rentify</span>
-        </div>
-        <ul class="nav-menu" id="nav-menu">
-          <li><a href="#home" class="nav-link">Home</a></li>
-          <li><a href="#features" class="nav-link">Features</a></li>
-          <li><a href="#how-it-works" class="nav-link">How It Works</a></li>
-          <li><a href="#about" class="nav-link">About</a></li>
-          <li><a href="#contact" class="nav-link">Contact</a></li>
-        </ul>
-        <div class="nav-buttons">
-          <button
-            class="btn btn-secondary"
-            onclick="window.location.href='auth.html'"
+    <header class="header">
+      <div class="container">
+        <a href="#" class="logo-link">
+          <img src="images/rentify_logo.png" alt="Rentify Logo" class="logo" />
+        </a>
+        <nav class="nav-main">
+          <ul class="nav-list">
+            <li><a href="#portals">Portals</a></li>
+            <li><a href="#how-it-works">How It Works</a></li>
+            <li><a href="#features">Features</a></li>
+            <li><a href="#footer">Contact</a></li>
+            <li class="nav-auth-mobile"><a href="auth.html">Login</a></li>
+            <li class="nav-auth-mobile">
+              <a href="auth.html#signup">Sign Up</a>
+            </li>
+          </ul>
+        </nav>
+        <div class="nav-auth-desktop">
+          <a href="auth.html" class="btn btn-secondary btn-sm">Login</a>
+          <a href="auth.html#signup" class="btn btn-secondary btn-sm"
+            >Sign Up</a
           >
-            Login
-          </button>
-          <button
-            class="btn btn-primary"
-            onclick="window.location.href='auth.html'"
-          >
-            Sign Up
-          </button>
         </div>
-        <div class="hamburger" id="hamburger">
-          <span></span>
-          <span></span>
-          <span></span>
-        </div>
+        <button class="nav-toggle" aria-label="Open navigation">
+          <span class="hamburger"></span>
+        </button>
       </div>
-    </nav>
+    </header>
 
-    <!-- Hero Section -->
-    <section id="home" class="hero">
-      <div class="hero-container">
-        <div class="hero-content">
-          <h1>Simplify Your Rental Management</h1>
-          <p>
-            Connect landlords and tenants seamlessly. Manage rent payments,
-            maintenance requests, and communication all in one modern platform.
+    <main>
+      <section class="hero">
+        <div class="container">
+          <div class="hero-content">
+            <h1>Stress-Free Rentals in Bangladesh</h1>
+            <p>
+              A seamless platform connecting landlords and tenants. Pay rent
+              online, handle maintenance, and stay organized with ease.
+            </p>
+            <a href="auth.html" class="btn btn-primary">Get Started Today</a>
+          </div>
+        </div>
+      </section>
+
+      <section id="portals" class="section">
+        <div class="container">
+          <h2 class="section-title">Choose Your Portal</h2>
+          <p class="section-subtitle">
+            Login or sign up as a landlord or a tenant to begin.
           </p>
-          <div class="hero-buttons">
-            <button
-              class="btn btn-large btn-primary"
-              onclick="window.location.href='auth.html'"
-            >
-              Get Started Free
-            </button>
-            <button
-              class="btn btn-large btn-outline"
-              onclick="document.getElementById('features').scrollIntoView({behavior: 'smooth'})"
-            >
-              Learn More
-            </button>
-          </div>
-          <div class="hero-stats">
-            <div class="stat-item">
-              <h3>1000+</h3>
-              <p>Properties</p>
+          <div class="card-container">
+            <div class="card">
+              <h3>Landlord Portal</h3>
+              <p>
+                Manage your properties, track rent payments, and communicate
+                effectively with tenants.
+              </p>
+              <a href="auth.html" class="btn btn-secondary">Landlord Tools</a>
             </div>
-            <div class="stat-item">
-              <h3>5000+</h3>
-              <p>Users</p>
-            </div>
-            <div class="stat-item">
-              <h3>99%</h3>
-              <p>Satisfaction</p>
+            <div class="card">
+              <h3>Tenant Portal</h3>
+              <p>
+                Pay your rent online, easily request repairs, and message your
+                landlord anytime.
+              </p>
+              <a href="auth.html" class="btn btn-secondary">Tenant Tools</a>
             </div>
           </div>
         </div>
-        <div class="hero-image">
-          <div class="hero-illustration">
-            <i class="fas fa-building"></i>
-          </div>
-        </div>
-      </div>
-    </section>
+      </section>
 
-    <!-- Features Section -->
-    <section id="features" class="features">
-      <div class="container">
-        <div class="section-header">
-          <h2>Powerful Features for Modern Rental Management</h2>
-          <p>Everything needed to manage properties efficiently in 2025</p>
-        </div>
-        <div class="features-grid">
-          <div class="feature-card">
-            <div class="feature-icon">
-              <i class="fas fa-money-bill-wave"></i>
+      <section id="how-it-works" class="section section-light">
+        <div class="container">
+          <h2 class="section-title">Get Started in 3 Easy Steps</h2>
+          <div class="steps-container">
+            <div class="step-card">
+              <div class="step-number">1</div>
+              <h3>Sign Up</h3>
+              <p>
+                Create an account in seconds as either a Landlord or a Tenant.
+              </p>
             </div>
-            <h3>Online Rent Collection</h3>
-            <p>
-              Secure automated rent payment system with instant notifications
-              and complete payment history tracking.
-            </p>
-          </div>
-          <div class="feature-card">
-            <div class="feature-icon">
-              <i class="fas fa-tools"></i>
+            <div class="step-card">
+              <div class="step-number">2</div>
+              <h3>Connect</h3>
+              <p>
+                Landlords can easily add properties and invite tenants to
+                connect.
+              </p>
             </div>
-            <h3>Maintenance Requests</h3>
-            <p>
-              Submit, track, and manage maintenance issues with photo uploads
-              and real-time status updates.
-            </p>
-          </div>
-          <div class="feature-card">
-            <div class="feature-icon">
-              <i class="fas fa-comments"></i>
+            <div class="step-card">
+              <div class="step-number">3</div>
+              <h3>Manage</h3>
+              <p>
+                Pay rent, request maintenance, and communicate seamlessly
+                online.
+              </p>
             </div>
-            <h3>Instant Messaging</h3>
-            <p>
-              Direct communication channel between landlords and tenants with
-              complete message history.
-            </p>
-          </div>
-          <div class="feature-card">
-            <div class="feature-icon">
-              <i class="fas fa-file-contract"></i>
-            </div>
-            <h3>Document Management</h3>
-            <p>
-              Store and access lease agreements, notices, and important
-              documents securely online.
-            </p>
-          </div>
-          <div class="feature-card">
-            <div class="feature-icon">
-              <i class="fas fa-chart-line"></i>
-            </div>
-            <h3>Analytics & Reports</h3>
-            <p>
-              Generate detailed reports on payments, maintenance trends, and
-              overall property performance.
-            </p>
-          </div>
-          <div class="feature-card">
-            <div class="feature-icon">
-              <i class="fas fa-mobile-alt"></i>
-            </div>
-            <h3>Mobile Responsive</h3>
-            <p>
-              Access the portal anytime, anywhere from any device with full
-              mobile optimization.
-            </p>
           </div>
         </div>
-      </div>
-    </section>
+      </section>
 
-    <!-- How It Works Section -->
-    <section id="how-it-works" class="how-it-works">
-      <div class="container">
-        <div class="section-header">
-          <h2>How Rentify Works</h2>
-          <p>Get started in three simple steps</p>
-        </div>
-        <div class="steps-container">
-          <div class="step-card">
-            <div class="step-number">1</div>
-            <div class="step-icon">
-              <i class="fas fa-user-plus"></i>
+      <section id="features" class="section">
+        <div class="container">
+          <h2 class="section-title">Everything in One Place</h2>
+          <div class="features-grid">
+            <div class="feature">
+              <h3>Online Rent Payments</h3>
+              <p>
+                Tenants can pay easily and securely with bKash, Nagad, and bank
+                cards.
+              </p>
             </div>
-            <h3>Create Your Account</h3>
-            <p>
-              Sign up as a landlord or tenant in minutes with our easy and
-              secure registration process.
-            </p>
-          </div>
-          <div class="step-connector"></div>
-          <div class="step-card">
-            <div class="step-number">2</div>
-            <div class="step-icon">
-              <i class="fas fa-home"></i>
+            <div class="feature">
+              <h3>Maintenance Requests</h3>
+              <p>
+                Submit repair requests with details and photos for quick
+                resolution.
+              </p>
             </div>
-            <h3>Add Properties or Connect</h3>
-            <p>
-              Landlords add properties while tenants connect with their rental
-              using a unique property code.
-            </p>
-          </div>
-          <div class="step-connector"></div>
-          <div class="step-card">
-            <div class="step-number">3</div>
-            <div class="step-icon">
-              <i class="fas fa-tasks"></i>
+            <div class="feature">
+              <h3>Document Storage</h3>
+              <p>
+                Keep your important lease agreements and documents safe and
+                accessible.
+              </p>
             </div>
-            <h3>Manage Everything Online</h3>
-            <p>
-              Handle rent payments, maintenance, documents, and communication
-              from one centralized dashboard.
-            </p>
           </div>
         </div>
-      </div>
-    </section>
+      </section>
 
-    <!-- User Type Selection -->
-    <section class="user-types">
-      <div class="container">
-        <div class="section-header">
-          <h2>Choose Your Role</h2>
-          <p>Select the option that best describes you</p>
-        </div>
-        <div class="types-grid">
-          <div class="type-card">
-            <div class="type-badge">Popular</div>
-            <div class="type-icon">
-              <i class="fas fa-building"></i>
+      <section class="section section-light">
+        <div class="container">
+          <h2 class="section-title">What People Are Saying</h2>
+          <div class="testimonial-container">
+            <div class="testimonial">
+              <p class="testimonial-text">
+                "Rentify makes collecting rent so much easier. My tenants pay on
+                time now, and I can track everything from my dashboard. It's a
+                lifesaver!"
+              </p>
+              <p class="testimonial-author">– Karim Chowdhury, Landlord</p>
             </div>
-            <h3>For Landlords</h3>
-            <ul class="type-features">
-              <li><i class="fas fa-check"></i> List unlimited properties</li>
-              <li><i class="fas fa-check"></i> Collect rent online securely</li>
-              <li><i class="fas fa-check"></i> Track maintenance requests</li>
-              <li><i class="fas fa-check"></i> Manage multiple tenants</li>
-              <li><i class="fas fa-check"></i> Generate financial reports</li>
-              <li><i class="fas fa-check"></i> Digital lease agreements</li>
-            </ul>
-            <button
-              class="btn btn-primary btn-full"
-              onclick="window.location.href='auth.html?type=landlord'"
-            >
-              Get Started as Landlord
-            </button>
-          </div>
-          <div class="type-card">
-            <div class="type-icon">
-              <i class="fas fa-user"></i>
+            <div class="testimonial">
+              <p class="testimonial-text">
+                "I love paying my rent on the app. It's very convenient, and my
+                landlord is much faster to respond to my maintenance requests
+                now. Highly recommend!"
+              </p>
+              <p class="testimonial-author">– Junayed Hasan, Tenant</p>
             </div>
-            <h3>For Tenants</h3>
-            <ul class="type-features">
-              <li><i class="fas fa-check"></i> Pay rent online securely</li>
-              <li><i class="fas fa-check"></i> Submit maintenance requests</li>
-              <li>
-                <i class="fas fa-check"></i> Message your landlord directly
-              </li>
-              <li>
-                <i class="fas fa-check"></i> Access lease documents anytime
-              </li>
-              <li><i class="fas fa-check"></i> View payment history</li>
-              <li>
-                <i class="fas fa-check"></i> Receive instant notifications
-              </li>
-            </ul>
-            <button
-              class="btn btn-primary btn-full"
-              onclick="window.location.href='auth.html?type=tenant'"
-            >
-              Get Started as Tenant
-            </button>
           </div>
         </div>
-      </div>
-    </section>
+      </section>
+    </main>
 
-    <!-- About Section -->
-    <section id="about" class="about">
+    <footer id="footer" class="footer">
       <div class="container">
-        <div class="about-content">
-          <div class="about-text">
-            <h2>About Rentify</h2>
-            <p>
-              Rentify is a modern rental management platform designed to
-              simplify and streamline the relationship between landlords and
-              tenants. We believe that property management should be
-              transparent, efficient, and completely hassle-free.
-            </p>
-            <p>
-              Our platform provides all the essential tools needed to manage
-              rental properties effectively, from seamless rent collection to
-              comprehensive maintenance tracking, all while fostering better
-              communication and trust between both parties.
-            </p>
-            <div class="about-values">
-              <div class="value-item">
-                <i class="fas fa-shield-alt"></i>
-                <div>
-                  <h4>Secure & Trusted</h4>
-                  <p>Bank-level security for all transactions</p>
-                </div>
-              </div>
-              <div class="value-item">
-                <i class="fas fa-clock"></i>
-                <div>
-                  <h4>24/7 Support</h4>
-                  <p>Always here to help when needed</p>
-                </div>
-              </div>
-              <div class="value-item">
-                <i class="fas fa-award"></i>
-                <div>
-                  <h4>Award Winning</h4>
-                  <p>Recognized for excellence in property tech</p>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="about-image">
-            <div class="about-illustration">
-              <i class="fas fa-handshake"></i>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Testimonials Section -->
-    <section class="testimonials">
-      <div class="container">
-        <div class="section-header">
-          <h2>What Our Users Say</h2>
-          <p>Real experiences from real users</p>
-        </div>
-        <div class="testimonials-grid">
-          <div class="testimonial-card">
-            <div class="testimonial-rating">
-              <i class="fas fa-star"></i>
-              <i class="fas fa-star"></i>
-              <i class="fas fa-star"></i>
-              <i class="fas fa-star"></i>
-              <i class="fas fa-star"></i>
-            </div>
-            <p>
-              "Rentify has completely transformed how I manage my rental
-              properties. Everything is so much easier now!"
-            </p>
-            <div class="testimonial-author">
-              <div class="author-avatar">
-                <i class="fas fa-user"></i>
-              </div>
-              <div>
-                <h4>Sarah Johnson</h4>
-                <span>Landlord, 5 Properties</span>
-              </div>
-            </div>
-          </div>
-          <div class="testimonial-card">
-            <div class="testimonial-rating">
-              <i class="fas fa-star"></i>
-              <i class="fas fa-star"></i>
-              <i class="fas fa-star"></i>
-              <i class="fas fa-star"></i>
-              <i class="fas fa-star"></i>
-            </div>
-            <p>
-              "As a tenant, I love being able to pay rent online and submit
-              maintenance requests instantly. Highly recommend!"
-            </p>
-            <div class="testimonial-author">
-              <div class="author-avatar">
-                <i class="fas fa-user"></i>
-              </div>
-              <div>
-                <h4>Michael Chen</h4>
-                <span>Tenant</span>
-              </div>
-            </div>
-          </div>
-          <div class="testimonial-card">
-            <div class="testimonial-rating">
-              <i class="fas fa-star"></i>
-              <i class="fas fa-star"></i>
-              <i class="fas fa-star"></i>
-              <i class="fas fa-star"></i>
-              <i class="fas fa-star"></i>
-            </div>
-            <p>
-              "The best property management tool I've used. Clean interface,
-              powerful features, and excellent support."
-            </p>
-            <div class="testimonial-author">
-              <div class="author-avatar">
-                <i class="fas fa-user"></i>
-              </div>
-              <div>
-                <h4>Emily Rodriguez</h4>
-                <span>Landlord, 12 Properties</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Contact Section -->
-    <section id="contact" class="contact">
-      <div class="container">
-        <div class="section-header">
-          <h2>Get In Touch</h2>
-          <p>Have questions? We're here to help</p>
-        </div>
-        <div class="contact-content">
-          <form class="contact-form" id="contact-form">
-            <div class="form-row">
-              <div class="form-group">
-                <input type="text" id="name" required />
-                <label for="name">Your Name</label>
-              </div>
-              <div class="form-group">
-                <input type="email" id="email" required />
-                <label for="email">Your Email</label>
-              </div>
-            </div>
-            <div class="form-group">
-              <input type="text" id="subject" required />
-              <label for="subject">Subject</label>
-            </div>
-            <div class="form-group">
-              <textarea id="message" rows="5" required></textarea>
-              <label for="message">Message</label>
-            </div>
-            <button type="submit" class="btn btn-primary btn-full">
-              Send Message
-            </button>
-          </form>
-          <div class="contact-info">
-            <h3>Contact Information</h3>
-            <div class="info-item">
-              <i class="fas fa-envelope"></i>
-              <div>
-                <h4>Email</h4>
-                <p>support@rentify.com</p>
-              </div>
-            </div>
-            <div class="info-item">
-              <i class="fas fa-phone"></i>
-              <div>
-                <h4>Phone</h4>
-                <p>+1 (555) 123-4567</p>
-              </div>
-            </div>
-            <div class="info-item">
-              <i class="fas fa-map-marker-alt"></i>
-              <div>
-                <h4>Address</h4>
-                <p>123 Rental Street<br />Property City, PC 12345</p>
-              </div>
-            </div>
-            <div class="social-links">
-              <a href="#"><i class="fab fa-facebook"></i></a>
-              <a href="#"><i class="fab fa-twitter"></i></a>
-              <a href="#"><i class="fab fa-instagram"></i></a>
-              <a href="#"><i class="fab fa-linkedin"></i></a>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Footer -->
-    <footer class="footer">
-      <div class="container">
-        <div class="footer-content">
-          <div class="footer-section">
-            <div class="logo">
-              <i class="fas fa-home"></i>
-              <span>Rentify</span>
-            </div>
-            <p>
-              Simplifying rental management for landlords and tenants worldwide.
-            </p>
-          </div>
-          <div class="footer-section">
-            <h4>Quick Links</h4>
-            <ul>
-              <li><a href="#home">Home</a></li>
-              <li><a href="#features">Features</a></li>
-              <li><a href="#how-it-works">How It Works</a></li>
-              <li><a href="#about">About</a></li>
-              <li><a href="#contact">Contact</a></li>
-            </ul>
-          </div>
-          <div class="footer-section">
-            <h4>Resources</h4>
-            <ul>
-              <li><a href="#">Help Center</a></li>
-              <li><a href="#">Privacy Policy</a></li>
-              <li><a href="#">Terms of Service</a></li>
-              <li><a href="#">FAQ</a></li>
-            </ul>
-          </div>
-          <div class="footer-section">
-            <h4>Newsletter</h4>
-            <p>Subscribe to get updates and news</p>
-            <form class="newsletter-form">
-              <input type="email" placeholder="Your email address" />
-              <button type="submit" class="btn btn-primary">Subscribe</button>
-            </form>
-          </div>
-        </div>
-        <div class="footer-bottom">
-          <p>&copy; 2025 Rentify. All rights reserved.</p>
-        </div>
+        <p>© 2025 Rentify. All rights reserved.</p>
       </div>
     </footer>
 
-    <script src="landing.js"></script>
+    <script src="index.js"></script>
   </body>
 </html>
