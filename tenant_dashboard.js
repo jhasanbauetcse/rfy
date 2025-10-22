@@ -44,13 +44,23 @@ const fmtMoney = (n) =>
   n == null ? "—" : `৳${Number(n).toLocaleString("en-BD")}`;
 const fmtDate = (d) => {
   if (!d) return "—";
+  // Handles Firestore Timestamps, ISO strings, and Date objects
   const dt = d instanceof Date ? d : d?.toDate ? d.toDate() : new Date(d);
-  return dt.toLocaleDateString("en-GB", {
-    day: "2-digit",
-    month: "short",
-    year: "numeric",
-  });
+  // Return date in YYYY-MM-DD for input[type=date] compatibility and display
+  const year = dt.getFullYear();
+  const month = String(dt.getMonth() + 1).padStart(2, "0");
+  const day = String(dt.getDate()).padStart(2, "0");
+  return `${day}-${month}-${year}`;
 };
+const fmtDateForInput = (d) => {
+  if (!d) return "";
+  const dt = d instanceof Date ? d : d?.toDate ? d.toDate() : new Date(d);
+  const year = dt.getFullYear();
+  const month = String(dt.getMonth() + 1).padStart(2, "0");
+  const day = String(dt.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+};
+
 function setActiveSection(name) {
   $$(".nav-link").forEach((a) =>
     a.classList.toggle("active", a.dataset.section === name)
@@ -99,8 +109,9 @@ auth.onAuthStateChanged(async (user) => {
     await loadLeasesAndStats();
     await loadMaintenance();
     await loadPayments();
+    await loadAnnouncements();
   } catch (e) {
-    console.error(e);
+    console.error("Error loading tenant data:", e);
   }
 });
 
@@ -110,7 +121,7 @@ function renderProfileDetails() {
   $("#pPhone").textContent = tenantProfile.phone || "—";
   $("#pDob").textContent = tenantProfile.dob ? fmtDate(tenantProfile.dob) : "—";
   $("#pAddress").textContent = tenantProfile.address || "—";
-  $("#pTaxId").textContent = tenantProfile.taxId || "—";
+  $("#pNid").textContent = tenantProfile.nid || "—";
   if (tenantProfile.createdAt?.toDate) {
     $("#pCreated").textContent = fmtDate(tenantProfile.createdAt);
   }
@@ -118,33 +129,20 @@ function renderProfileDetails() {
 
 async function loadLeasesAndStats() {
   leases = [];
-  const leaseQuery = await db
-    .collection("tenants")
-    .where("landlordId", "==", tenantProfile.landlordId)
-    .get();
-  leaseQuery.forEach((doc) => {
-    if (doc.id === currentUser.uid) {
-      leases.push({ id: doc.id, ...doc.data() });
-    }
-  });
+  if (tenantProfile && tenantProfile.propertyId) {
+    leases.push(tenantProfile);
+  }
 
   const today = new Date();
   leases = leases.map((l) => {
-    let next = l.leaseDate;
-    if (next) {
-      const due = new Date(
-        today.getFullYear(),
-        today.getMonth(),
-        next.toDate().getDate()
-      );
-      next =
-        due >= today
-          ? due
-          : new Date(
-              today.getFullYear(),
-              today.getMonth() + 1,
-              next.toDate().getDate()
-            );
+    let next = l.leaseDate ? l.leaseDate.toDate() : null;
+    if (next && l.rentPayDate) {
+      const dueDay = l.rentPayDate;
+      let dueDate = new Date(today.getFullYear(), today.getMonth(), dueDay);
+      if (dueDate < today) {
+        dueDate.setMonth(dueDate.getMonth() + 1);
+      }
+      next = dueDate;
     }
     return { ...l, _next: next };
   });
@@ -156,16 +154,15 @@ async function loadLeasesAndStats() {
   $("#monthlyRentTotal").textContent = fmtMoney(totalRent);
 
   if (leases.length) {
-    const soonest =
-      leases
-        .filter((l) => !!l._next)
-        .sort((a, b) => new Date(a._next) - new Date(b._next))[0] || leases[0];
+    const soonest = leases.sort(
+      (a, b) => new Date(a._next) - new Date(b._next)
+    )[0];
     $("#nextDue").textContent = fmtDate(soonest?._next);
-    const prop = tenantProfile.propertyId;
-    const propDoc = await db.collection("properties").doc(prop).get();
-    $("#nextDueLease").textContent = propDoc.data()?.address
-      ? `Lease: ${propDoc.data()?.address}`
-      : "—";
+    if (soonest?.propertyId) {
+      $("#nextDueLease").textContent = `Lease: ${await getPropertyIdentifier(
+        soonest.propertyId
+      )}`;
+    }
   } else {
     $("#nextDue").textContent = "—";
     $("#nextDueLease").textContent = "No leases found";
@@ -175,53 +172,6 @@ async function loadLeasesAndStats() {
   renderLeasesList();
 }
 
-/* ---------------- Quick Actions (per lease) ---------------- */
-function renderQuickActions() {
-  const wrap = $("#quickActions");
-  wrap.innerHTML = "";
-
-  if (!leases.length) {
-    wrap.innerHTML = `<div class="qa" style="text-align: left; cursor: default;"><div class="qa-title">No leases</div>
-            <p class="qa-meta" style="margin-top: 8px;">When your landlord adds a lease, quick actions will appear here.</p></div>`;
-    return;
-  }
-
-  leases.forEach((l) => {
-    const el = document.createElement("div");
-    el.className = "qa";
-    el.innerHTML = `
-            <div class="qa-title">Lease Actions</div>
-            <div class="qa-meta">Next Due: ${fmtDate(
-              l._next
-            )} • Monthly: ${fmtMoney(l.rentAmount)}</div>
-            <div class="qa-actions">
-              <button class="btn primary" data-action="pay" data-lease="${
-                l.id
-              }">Pay Rent</button>
-              <button class="btn" data-action="maint" data-lease="${
-                l.id
-              }">Request Maintenance</button>
-            </div>
-          `;
-    wrap.appendChild(el);
-  });
-  wrap.addEventListener("click", qaHandler);
-}
-
-async function qaHandler(e) {
-  const btn = e.target.closest("button");
-  if (!btn) return;
-  const leaseId = btn.dataset.lease;
-  const lease = leases.find((x) => x.id === leaseId);
-  if (!lease) return;
-  const prop = await db.collection("properties").doc(lease.propertyId).get();
-  lease.address = prop.data().address;
-
-  if (btn.dataset.action === "pay") openPayDialog(lease);
-  if (btn.dataset.action === "maint") openMaintDialog(lease);
-}
-
-/* ---------------- Leases list ---------------- */
 async function renderLeasesList() {
   const list = $("#leasesList");
   list.innerHTML = "";
@@ -232,19 +182,81 @@ async function renderLeasesList() {
   }
 
   for (const l of leases) {
-    const prop = await db.collection("properties").doc(l.propertyId).get();
-    l.address = prop.data().address;
+    let propertyIdentifier = await getPropertyIdentifier(l.propertyId);
     const div = document.createElement("div");
     div.className = "list-item";
     div.innerHTML = `
-            <strong>${l.address || "Lease"}</strong><br/>
-            <span class="muted">Monthly Rent:</span> ${fmtMoney(
-              l.rentAmount
-            )} &nbsp;•&nbsp;
-            <span class="muted">Next Due:</span> ${fmtDate(l._next)}
-            `;
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+            <div>
+                <strong>${propertyIdentifier}</strong><br/>
+                <span class="muted">Monthly Rent:</span> ${fmtMoney(
+                  l.rentAmount
+                )} &nbsp;•&nbsp;
+                <span class="muted">Advance Paid:</span> ${fmtMoney(
+                  l.advancePayment || 0
+                )} <br/>
+                <span class="muted">Next Due:</span> ${fmtDate(
+                  l._next
+                )} &nbsp;•&nbsp;
+                <span class="muted">Expires on:</span> ${fmtDate(
+                  l.leaseExpiryDate
+                )}
+            </div>
+            <button class="btn" data-action="details" data-property-id="${
+              l.propertyId
+            }">Details</button>
+        </div>
+        `;
     list.appendChild(div);
   }
+}
+
+function renderQuickActions() {
+  const wrap = $("#quickActions");
+  wrap.innerHTML = "";
+
+  if (!leases.length) {
+    wrap.innerHTML = `<div class="qa" style="text-align: left; cursor: default;"><div class="qa-title">No leases</div>
+            <p class="qa-meta" style="margin-top: 8px;">When your landlord adds a lease, quick actions will appear here.</p></div>`;
+    return;
+  }
+
+  leases.forEach(async (l) => {
+    const el = document.createElement("div");
+    el.className = "qa";
+    let propertyIdentifier = await getPropertyIdentifier(l.propertyId);
+
+    el.innerHTML = `
+            <div class="qa-title">Lease at ${propertyIdentifier}</div>
+            <div class="qa-meta">Next Due: ${fmtDate(
+              l._next
+            )} • Monthly: ${fmtMoney(l.rentAmount)}</div>
+            <div class="qa-actions">
+              <button class="btn primary" data-action="pay" data-lease='${JSON.stringify(
+                l
+              )}'>Pay Rent</button>
+              <button class="btn" data-action="maint" data-lease='${JSON.stringify(
+                l
+              )}'>Request Maintenance</button>
+            </div>
+          `;
+    wrap.appendChild(el);
+  });
+  wrap.addEventListener("click", qaHandler);
+}
+
+async function qaHandler(e) {
+  const btn = e.target.closest("button[data-action]");
+  if (!btn) return;
+
+  const leaseData = JSON.parse(btn.dataset.lease);
+
+  leaseData.propertyIdentifier = await getPropertyIdentifier(
+    leaseData.propertyId
+  );
+
+  if (btn.dataset.action === "pay") openPayDialog(leaseData);
+  if (btn.dataset.action === "maint") openMaintDialog(leaseData);
 }
 
 async function loadMaintenance() {
@@ -255,9 +267,13 @@ async function loadMaintenance() {
   const maintQuery = await db
     .collection("maintenance_requests")
     .where("tenantId", "==", currentUser.uid)
-    .orderBy("createdAt", "desc")
     .get();
+
   maintQuery.forEach((d) => rows.push({ id: d.id, ...d.data() }));
+
+  rows.sort(
+    (a, b) => (b.createdAt?.toDate() || 0) - (a.createdAt?.toDate() || 0)
+  );
 
   const openCount = rows.filter((r) => (r.status || "open") === "open").length;
   $("#openMaintCount").textContent = String(openCount);
@@ -272,97 +288,283 @@ async function loadMaintenance() {
 
   for (const r of rows) {
     const d = document.createElement("div");
-    d.className = "list-item";
+    d.className = "list-item maintenance-item"; // Use consistent class
+    const status = r.status || "open";
+
+    // Conditionally create the action button
+    const actionButton =
+      status !== "completed"
+        ? `<button class="btn primary" data-action="mark-complete" data-request-id="${r.id}">Mark as Solved</button>`
+        : `<button class="btn" disabled>Solved</button>`;
+
     d.innerHTML = `
-            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
-              <div>
-                <strong>${r.title || "Request"}</strong>
-                <p class="muted" style="margin: 4px 0 0;">
-                  Lease: ${await leaseAddress(
-                    r.propertyId
-                  )} • Created: ${fmtDate(r.createdAt)}
-                </p>
-              </div>
-              <span class="muted" style="text-transform: capitalize; flex-shrink: 0;">${
-                r.status || "open"
-              }</span>
-            </div>
-            `;
+      <div class="maintenance-info">
+        <strong>${r.title || "Request"}</strong>
+        <span class="muted">
+          Lease: ${await getPropertyIdentifier(r.propertyId)}
+        </span>
+        <span class="muted">
+          Reported: ${fmtDate(r.createdAt)}
+        </span>
+      </div>
+      <div class="maintenance-assignment">
+        <span class="status-badge ${status}">
+          ${status.replace("-", " ")}
+        </span>
+        <span class="muted" style="font-size: 13px;">
+          Technician: ${r.technicianName || "None"}
+        </span>
+      </div>
+      <div class="maintenance-actions">
+        ${actionButton}
+      </div>
+    `;
     list.appendChild(d);
   }
 }
 
-async function leaseAddress(propertyId) {
-  const propDoc = await db.collection("properties").doc(propertyId).get();
-  return propDoc.data()?.address || "—";
+// NEW: Event listener for "Mark as Solved" button
+$("#maintenanceList").addEventListener("click", async (e) => {
+  const target = e.target.closest("button[data-action='mark-complete']");
+  if (!target) return;
+
+  const id = target.dataset.requestId;
+  if (!id) return;
+
+  await markMaintenanceAsCompleted(id, target);
+});
+
+// NEW: Function to update maintenance status to 'completed'
+async function markMaintenanceAsCompleted(id, button) {
+  // Disable button to prevent double-click
+  if (button) {
+    button.disabled = true;
+    button.textContent = "Updating...";
+  }
+
+  try {
+    await db.collection("maintenance_requests").doc(id).update({
+      status: "completed",
+      updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+    });
+    // Refresh the list to show the change
+    await loadMaintenance();
+  } catch (error) {
+    console.error("Error marking as completed:", error);
+    alert("Failed to update status. Please try again.");
+    // Re-enable button on failure
+    if (button) {
+      button.disabled = false;
+      button.textContent = "Mark as Solved";
+    }
+  }
+}
+
+async function getPropertyIdentifier(propertyId) {
+  if (!propertyId) return "—";
+  try {
+    const propDoc = await db.collection("properties").doc(propertyId).get();
+    if (propDoc.exists) {
+      const prop = propDoc.data();
+      const name = prop.propertyName || prop.address;
+      const unit = prop.unit ? ` (Unit ${prop.unit})` : "";
+      return `${name}${unit}`;
+    }
+  } catch (error) {
+    console.error("Error getting property identifier:", error);
+  }
+  return "—";
 }
 
 async function loadPayments() {
   const list = $("#paymentsList");
   list.innerHTML = "";
-  // You would fetch and display payment history here
   list.innerHTML = `<div class="list-item">No payment history found.</div>`;
 }
 
-/* ---------------- Modals Logic ---------------- */
-const editProfileDialog = $("#editProfileDialog");
-const payDialog = $("#payDialog");
-const maintDialog = $("#maintDialog");
+async function loadAnnouncements() {
+  const list = $("#announcementsList");
+  list.innerHTML = "";
 
-$("#editProfileBtn").addEventListener("click", () => {
-  if (!tenantProfile) return;
-  $("#profileName").value = tenantProfile.fullName || "";
-  $("#profileEmail").value = tenantProfile.email || "";
-  $("#profilePhone").value = tenantProfile.phone || "";
-  $("#profileDob").value = tenantProfile.dob || "";
-  $("#profileAddress").value = tenantProfile.address || "";
-  $("#profileTaxId").value = tenantProfile.taxId || "";
-  editProfileDialog.showModal();
-});
-
-$("#cancelProfileEdit").addEventListener("click", () =>
-  editProfileDialog.close()
-);
-$("#profileForm").addEventListener("submit", async (e) => {
-  e.preventDefault();
-  const payload = {
-    fullName: $("#profileName").value.trim(),
-    email: $("#profileEmail").value.trim(),
-    phone: $("#profilePhone").value.trim(),
-    dob: $("#profileDob").value,
-    address: $("#profileAddress").value.trim(),
-    taxId: $("#profileTaxId").value.trim(),
-  };
-
-  if (!payload.fullName || !payload.email) {
-    alert("Full Name and Email are required.");
+  if (!tenantProfile?.landlordId) {
+    list.innerHTML = `<div class="list-item">No announcements found. You will see announcements here once your landlord assigns you to a property.</div>`;
     return;
   }
 
   try {
-    await db.collection("tenants").doc(currentUser.uid).update(payload);
-    tenantProfile = { ...tenantProfile, ...payload };
+    // Query 1: Get announcements sent specifically to this tenant
+    const specificAnnouncementsPromise = db
+      .collection("announcements")
+      .where("recipientIds", "array-contains", currentUser.uid)
+      .get();
+
+    // Query 2: Get all other announcements from the landlord
+    const generalAnnouncementsPromise = db
+      .collection("announcements")
+      .where("landlordId", "==", tenantProfile.landlordId)
+      .get();
+
+    const [specificSnap, generalSnap] = await Promise.all([
+      specificAnnouncementsPromise,
+      generalAnnouncementsPromise,
+    ]);
+
+    const announcementsMap = new Map();
+
+    // Add specific announcements to the map
+    specificSnap.forEach((doc) => {
+      announcementsMap.set(doc.id, { id: doc.id, ...doc.data() });
+    });
+
+    // Add general announcements, ensuring they aren't 'specific' ones
+    // meant for other tenants and haven't already been added.
+    generalSnap.forEach((doc) => {
+      const data = doc.data();
+      if (data.recipientType !== "specific" && !announcementsMap.has(doc.id)) {
+        announcementsMap.set(doc.id, { id: doc.id, ...data });
+      }
+    });
+
+    const announcements = Array.from(announcementsMap.values());
+
+    announcements.sort(
+      (a, b) => (b.createdAt?.toDate() || 0) - (a.createdAt?.toDate() || 0)
+    );
+
+    if (!announcements.length) {
+      list.innerHTML = `<div class="list-item">No announcements from your landlord yet.</div>`;
+      return;
+    }
+
+    list.innerHTML = announcements
+      .map(
+        (a) => `
+            <div class="list-item">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <strong>${a.title}</strong>
+                    <span class="muted">${fmtDate(a.createdAt)}</span>
+                </div>
+                <p class="muted" style="margin-top: 8px; white-space: pre-wrap;">${
+                  a.details
+                }</p>
+            </div>
+        `
+      )
+      .join("");
+  } catch (error) {
+    console.error("Error fetching announcements: ", error);
+    list.innerHTML = `<div class="list-item">Error loading announcements.</div>`;
+  }
+}
+
+/* ---------------- Profile Editing Logic ---------------- */
+const editProfileBtn = $("#editProfileBtn");
+const saveProfileBtn = $("#saveProfileBtn");
+const cancelEditBtn = $("#cancelEditBtn");
+
+const pName = $("#pName");
+const pEmail = $("#pEmail");
+const pPhone = $("#pPhone");
+const pDob = $("#pDob");
+const pAddress = $("#pAddress");
+const pNid = $("#pNid");
+
+const pNameInput = $("#pNameInput");
+const pEmailInput = $("#pEmailInput");
+const pPhoneInput = $("#pPhoneInput");
+const pDobInput = $("#pDobInput");
+const pAddressInput = $("#pAddressInput");
+const pNidInput = $("#pNidInput");
+
+function toggleProfileEditMode(isEditing) {
+  // Toggle visibility of buttons
+  editProfileBtn.classList.toggle("hidden", isEditing);
+  saveProfileBtn.classList.toggle("hidden", !isEditing);
+  cancelEditBtn.classList.toggle("hidden", !isEditing);
+
+  // Toggle visibility of text vs. input fields
+  [pName, pEmail, pPhone, pDob, pAddress, pNid].forEach((el) =>
+    el.classList.toggle("hidden", isEditing)
+  );
+
+  [
+    pNameInput,
+    pEmailInput,
+    pPhoneInput,
+    pDobInput,
+    pAddressInput,
+    pNidInput,
+  ].forEach((el) => el.classList.toggle("hidden", !isEditing));
+
+  if (isEditing) {
+    // When entering edit mode, populate inputs with current data
+    pNameInput.value = tenantProfile.fullName || "";
+    pEmailInput.value = tenantProfile.email || "";
+    pPhoneInput.value = tenantProfile.phone || "";
+    pDobInput.value = fmtDateForInput(tenantProfile.dob);
+    pAddressInput.value = tenantProfile.address || "";
+    pNidInput.value = tenantProfile.nid || "";
+  }
+}
+
+editProfileBtn.addEventListener("click", () => {
+  toggleProfileEditMode(true);
+});
+
+cancelEditBtn.addEventListener("click", () => {
+  toggleProfileEditMode(false);
+});
+
+saveProfileBtn.addEventListener("click", async () => {
+  const updates = {
+    fullName: pNameInput.value.trim(),
+    email: pEmailInput.value.trim(),
+    phone: pPhoneInput.value.trim(),
+    dob: pDobInput.value,
+    address: pAddressInput.value.trim(),
+    nid: pNidInput.value.trim(),
+  };
+
+  if (!updates.fullName || !updates.email) {
+    alert("Full Name and Email are required.");
+    return;
+  }
+
+  saveProfileBtn.disabled = true;
+  saveProfileBtn.textContent = "Saving...";
+
+  try {
+    await db.collection("tenants").doc(currentUser.uid).update(updates);
+    tenantProfile = { ...tenantProfile, ...updates };
     renderProfileDetails();
-    editProfileDialog.close();
+    toggleProfileEditMode(false);
   } catch (err) {
     console.error("Error updating profile: ", err);
     alert("Failed to update profile. Please try again.");
+  } finally {
+    saveProfileBtn.disabled = false;
+    saveProfileBtn.textContent = "Save Changes";
   }
 });
+
+/* ---------------- Modals Logic (Non-Profile) ---------------- */
+const payDialog = $("#payDialog");
+const maintDialog = $("#maintDialog");
+const propertyDetailsModal = $("#propertyDetailsModal");
 
 let payDialogLease = null;
 function openPayDialog(lease) {
   payDialogLease = lease;
-  $("#payLeaseLabel").textContent = lease.address || "Lease";
+  $("#payLeaseLabel").textContent = lease.propertyIdentifier || "Lease";
   $("#payAmount").value = lease.rentAmount || "";
-  const d =
-    lease._next instanceof Date
-      ? lease._next
-      : lease._next?.toDate
-      ? lease._next.toDate()
-      : null;
-  if (d) {
-    $("#payForDate").value = d.toISOString().split("T")[0];
+
+  let nextDueDate = lease._next;
+  if (nextDueDate && !(nextDueDate instanceof Date)) {
+    nextDueDate = new Date(nextDueDate.seconds * 1000);
+  }
+
+  if (nextDueDate) {
+    $("#payForDate").value = nextDueDate.toISOString().split("T")[0];
   } else {
     $("#payForDate").value = "";
   }
@@ -381,7 +583,7 @@ $("#payForm").addEventListener("submit", async (e) => {
 let maintDialogLease = null;
 function openMaintDialog(lease) {
   maintDialogLease = lease;
-  $("#maintLeaseLabel").textContent = lease.address || "Lease";
+  $("#maintLeaseLabel").textContent = lease.propertyIdentifier || "Lease";
   maintDialog.showModal();
 }
 
@@ -402,6 +604,8 @@ $("#maintForm").addEventListener("submit", async (e) => {
     details,
     status: "open",
     createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+    technicianId: "", // Initialize empty
+    technicianName: "", // Initialize empty
   };
 
   try {
@@ -421,6 +625,43 @@ $("#newMaintBtn").addEventListener("click", () => {
     return;
   }
   openMaintDialog(leases[0]);
+});
+
+$("#leasesList").addEventListener("click", async (e) => {
+  const btn = e.target.closest('button[data-action="details"]');
+  if (btn) {
+    const propertyId = btn.dataset.propertyId;
+    if (propertyId) {
+      try {
+        const propDoc = await db.collection("properties").doc(propertyId).get();
+        if (propDoc.exists) {
+          showPropertyDetails(propDoc.data());
+        } else {
+          alert("Property details not found.");
+        }
+      } catch (error) {
+        console.error("Error fetching property details:", error);
+        alert("Could not fetch property details.");
+      }
+    }
+  }
+});
+
+function showPropertyDetails(prop) {
+  $("#detailsAddress").textContent = prop.address;
+  $("#detailsName").textContent = prop.propertyName || "—";
+  $("#detailsUnit").textContent = prop.unit || "—";
+  $("#detailsRent").textContent = fmtMoney(prop.rentAmount);
+  $("#detailsBedrooms").textContent = prop.bedrooms || "—";
+  $("#detailsBathrooms").textContent = prop.bathrooms || "—";
+  $("#detailsSqft").textContent = prop.sqft ? `${prop.sqft} sqft` : "—";
+  $("#detailsOther").textContent =
+    prop.details || "No additional details provided.";
+  propertyDetailsModal.showModal();
+}
+
+$("#closeDetailsBtn").addEventListener("click", () => {
+  propertyDetailsModal.close();
 });
 
 /* ---------------- Logout ---------------- */
