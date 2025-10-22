@@ -9,46 +9,181 @@
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
-    <!-- The stylesheet is now linked to the unified dashboard_style.css -->
     <link rel="stylesheet" href="dashboard_style.css" />
   </head>
   <body>
-    <!-- Overlay for the mobile menu -->
     <div class="overlay"></div>
     <div class="layout">
       <!-- Sidebar -->
       <aside class="sidebar">
-        <div class="brand"></div>
+        <div>
+          <div class="brand">
+            <!-- Brand content here -->
+          </div>
 
-        <nav class="nav">
-          <a class="nav-link active" data-section="dashboard">
-            <span> </span>
-            <span>Dashboard</span>
-          </a>
-          <a class="nav-link" data-section="profile">
-            <span> </span>
-            <span>Profile</span>
-          </a>
-          <a class="nav-link" data-section="leases">
-            <span> </span>
-            <span>My Lease</span>
-          </a>
-          <a class="nav-link" data-section="maintenance">
-            <span> </span>
-            <span>Maintenance</span>
-          </a>
-          <a class="nav-link" data-section="payments">
-            <span> </span>
-            <span>Rent Payment</span>
-          </a>
-        </nav>
+          <nav class="nav">
+            <a class="nav-link active" data-section="dashboard">
+              <span>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <rect x="3" y="3" width="7" height="7"></rect>
+                  <rect x="14" y="3" width="7" height="7"></rect>
+                  <rect x="14" y="14" width="7" height="7"></rect>
+                  <rect x="3" y="14" width="7" height="7"></rect>
+                </svg>
+              </span>
+              <span>Dashboard</span>
+            </a>
+            <a class="nav-link" data-section="profile">
+              <span>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+              </span>
+              <span>Profile</span>
+            </a>
+            <a class="nav-link" data-section="leases">
+              <span>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path
+                    d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"
+                  ></path>
+                  <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                </svg>
+              </span>
+              <span>My Lease</span>
+            </a>
+            <a class="nav-link" data-section="maintenance">
+              <span>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path
+                    d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"
+                  ></path>
+                </svg>
+              </span>
+              <span>Maintenance</span>
+            </a>
+            <a class="nav-link" data-section="payments">
+              <span>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <line x1="12" y1="1" x2="12" y2="23"></line>
+                  <path
+                    d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"
+                  ></path>
+                </svg>
+              </span>
+              <span>Rent Payment</span>
+            </a>
+            <a class="nav-link" data-section="announcements">
+              <span>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path
+                    d="M3 11.5a2.5 2.5 0 0 1 5 0V12a.5.5 0 0 1-.5.5h-4a.5.5 0 0 1-.5-.5v-.5z"
+                  ></path>
+                  <path
+                    d="M3 6.5a2.5 2.5 0 0 1 5 0V7a.5.5 0 0 1-.5.5h-4a.5.5 0 0 1-.5-.5v-.5z"
+                  ></path>
+                  <path d="M14 7h7"></path>
+                  <path d="M14 12h7"></path>
+                  <path d="M14 17h7"></path>
+                  <path
+                    d="M3 16.5a2.5 2.5 0 0 1 5 0V17a.5.5 0 0 1-.5.5h-4a.5.5 0 0 1-.5-.5v-.5z"
+                  ></path>
+                </svg>
+              </span>
+              <span>Announcements</span>
+            </a>
+          </nav>
+        </div>
+
+        <div class="sidebar-footer">
+          <button id="logoutBtn" class="logout-link">
+            <span>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                <polyline points="16 17 21 12 16 7"></polyline>
+                <line x1="21" y1="12" x2="9" y2="12"></line>
+              </svg>
+            </span>
+            <span>Log out</span>
+          </button>
+        </div>
       </aside>
 
       <!-- Main -->
       <main class="main">
         <header class="topbar">
           <div class="topbar-left">
-            <!-- Hamburger menu button for mobile -->
             <button class="menu-toggle" id="menuToggle" aria-label="Open menu">
               <span class="icon-bar"></span>
               <span class="icon-bar"></span>
@@ -64,7 +199,7 @@
             </div>
           </div>
           <div class="topbar-actions">
-            <button id="logoutBtn" class="logout">Log out</button>
+            <!-- Logout button was here -->
           </div>
         </header>
 
@@ -99,17 +234,47 @@
           <div class="panel">
             <div class="panel-head">
               <h2 class="h2">Profile Details</h2>
-              <button class="btn" id="editProfileBtn">Edit Profile</button>
+              <div class="profile-actions" style="display: flex; gap: 8px">
+                <button id="editProfileBtn" class="btn">Edit Profile</button>
+                <button id="saveProfileBtn" class="btn primary hidden">
+                  Save Changes
+                </button>
+                <button id="cancelEditBtn" class="btn ghost hidden">
+                  Cancel
+                </button>
+              </div>
             </div>
             <div class="kv">
-              <div><span>Name</span><strong id="pName">—</strong></div>
-              <div><span>Email</span><strong id="pEmail">—</strong></div>
-              <div><span>Phone</span><strong id="pPhone">—</strong></div>
-              <div><span>Date of Birth</span><strong id="pDob">—</strong></div>
-              <div class="kv-full">
-                <span>Permanent Address</span><strong id="pAddress">—</strong>
+              <div>
+                <span>Name</span>
+                <strong id="pName">—</strong>
+                <input type="text" id="pNameInput" class="hidden" />
               </div>
-              <div><span>Tax ID</span><strong id="pTaxId">—</strong></div>
+              <div>
+                <span>Email</span>
+                <strong id="pEmail">—</strong>
+                <input type="email" id="pEmailInput" class="hidden" />
+              </div>
+              <div>
+                <span>Phone</span>
+                <strong id="pPhone">—</strong>
+                <input type="tel" id="pPhoneInput" class="hidden" />
+              </div>
+              <div>
+                <span>Date of Birth</span>
+                <strong id="pDob">—</strong>
+                <input type="date" id="pDobInput" class="hidden" />
+              </div>
+              <div class="kv-full">
+                <span>Permanent Address</span>
+                <strong id="pAddress">—</strong>
+                <input type="text" id="pAddressInput" class="hidden" />
+              </div>
+              <div>
+                <span>National ID</span>
+                <strong id="pNid">—</strong>
+                <input type="text" id="pNidInput" class="hidden" />
+              </div>
               <div><span>Role</span><strong>Tenant</strong></div>
               <div>
                 <span>Member since</span><strong id="pCreated">—</strong>
@@ -142,51 +307,68 @@
         <!-- PAYMENTS -->
         <section id="section-payments" class="section">
           <div class="panel">
-            <h2 class="h2">Rent Payments</h2>
+            <h2 class="h2">Rent Payments History</h2>
             <div id="paymentsList" class="list"></div>
+          </div>
+        </section>
+
+        <!-- ANNOUNCEMENTS SECTION -->
+        <section id="section-announcements" class="section">
+          <div class="panel">
+            <h2 class="h2">Announcements from Landlord</h2>
+            <div id="announcementsList" class="list">
+              <!-- Announcements will be loaded here by JS -->
+            </div>
           </div>
         </section>
       </main>
     </div>
 
     <!-- MODALS -->
-    <dialog id="editProfileDialog" class="modal">
+
+    <!-- Custom Message Box (replaces alert) -->
+    <dialog id="messageModal" class="modal modal-small">
       <div class="modal-body">
-        <h3>Edit Profile</h3>
-        <form id="profileForm">
-          <div class="grid">
-            <div>
-              <label>Full Name</label>
-              <input type="text" id="profileName" required />
-            </div>
-            <div>
-              <label>Email Address</label>
-              <input type="email" id="profileEmail" required />
-            </div>
+        <h3 id="messageModalTitle">Success</h3>
+        <p id="messageModalText" class="muted" style="margin: 8px 0 24px">
+          Your message here.
+        </p>
+        <div class="modal-actions" style="justify-content: flex-end">
+          <button class="btn primary" id="messageModalClose">OK</button>
+        </div>
+      </div>
+    </dialog>
+
+    <dialog id="propertyDetailsModal" class="modal">
+      <div class="modal-body">
+        <h3 id="detailsAddress">Property Details</h3>
+        <div class="kv">
+          <div>
+            <span>Property Name</span><strong id="detailsName">—</strong>
           </div>
-          <div class="grid">
-            <div>
-              <label>Phone Number</label>
-              <input type="tel" id="profilePhone" />
-            </div>
-            <div>
-              <label>Date of Birth</label>
-              <input type="date" id="profileDob" />
-            </div>
+          <div>
+            <span>Unit / Apt #</span><strong id="detailsUnit">—</strong>
           </div>
-          <label>Permanent Address</label>
-          <textarea id="profileAddress" rows="2"></textarea>
-          <label>Tax ID</label>
-          <input type="text" id="profileTaxId" />
-          <div class="modal-actions">
-            <button class="btn ghost" type="button" id="cancelProfileEdit">
-              Cancel
-            </button>
-            <button class="btn primary" type="submit" id="profileSubmit">
-              Save Changes
-            </button>
+          <div>
+            <span>Monthly Rent</span><strong id="detailsRent">—</strong>
           </div>
-        </form>
+          <div>
+            <span>Bedrooms</span><strong id="detailsBedrooms">—</strong>
+          </div>
+          <div>
+            <span>Bathrooms</span><strong id="detailsBathrooms">—</strong>
+          </div>
+          <div><span>Area (sqft)</span><strong id="detailsSqft">—</strong></div>
+        </div>
+        <h4 class="h2" style="margin-top: 20px">Other Details</h4>
+        <p id="detailsOther" class="muted" style="margin-top: 4px">
+          No additional details provided.
+        </p>
+        <div class="modal-actions">
+          <button type="button" class="btn ghost" id="closeDetailsBtn">
+            Close
+          </button>
+        </div>
       </div>
     </dialog>
 
@@ -210,7 +392,50 @@
               Cancel
             </button>
             <button class="btn primary" type="submit" id="paySubmit">
-              Submit Payment
+              Proceed to Payment
+            </button>
+          </div>
+        </form>
+      </div>
+    </dialog>
+
+    <!-- NEW: Virtual Gateway Modal -->
+    <dialog id="virtualGatewayModal" class="modal">
+      <div class="modal-body">
+        <h3>Virtual Payment Gateway</h3>
+        <p class="muted">
+          This is a simulation. No real money will be charged.
+        </p>
+
+        <form id="virtualGatewayForm" class="gateway-form">
+          <div class="payment-summary">
+            <span>Paying for:</span>
+            <strong id="gatewayProperty">—</strong>
+            <span>Amount:</span>
+            <strong id="gatewayAmount">—</strong>
+          </div>
+
+          <label for="fakeCard">Card Number</label>
+          <input type="text" id="fakeCard" value="4242 4242 4242 4242" />
+          <div class="grid">
+            <div>
+              <label for="fakeExp">Expiry</label>
+              <input type="text" id="fakeExp" value="12 / 28" />
+            </div>
+            <div>
+              <label for="fakeCvc">CVC</label>
+              <input type="text" id="fakeCvc" value="123" />
+            </div>
+          </div>
+          <label for="fakeName">Name on Card</label>
+          <input type="text" id="fakeName" value="Tenant Name" />
+
+          <div class="modal-actions">
+            <button class="btn ghost" type="button" id="cancelGateway">
+              Cancel
+            </button>
+            <button class="btn primary" type="submit" id="submitGatewayPayment">
+              Pay Now
             </button>
           </div>
         </form>

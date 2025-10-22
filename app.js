@@ -37,10 +37,9 @@ function redirectUser(role) {
 
 // FETCH USER DATA AND DISPLAY ON DASHBOARD
 async function fetchUserDataAndDisplay(user, role) {
-  // Use a generic name element, but delegate most work to dashboard scripts
   const nameElement = document.getElementById("user-name");
   if (!nameElement) {
-    // This could be on a dashboard without the header element, proceed with data fetch
+    return;
   }
 
   try {
@@ -49,7 +48,6 @@ async function fetchUserDataAndDisplay(user, role) {
     const docSnapshot = await docRef.get();
 
     if (docSnapshot.exists) {
-      // Combine Firestore data with Auth data (UID and email)
       const userData = {
         ...docSnapshot.data(),
         uid: user.uid,
@@ -61,7 +59,6 @@ async function fetchUserDataAndDisplay(user, role) {
         nameElement.textContent = userName;
       }
 
-      // *** CRITICAL UPDATE: CALL THE CORRECT UI UPDATE FUNCTION ***
       if (
         role === "tenant" &&
         typeof window.updateTenantProfileUI === "function"
@@ -83,13 +80,13 @@ async function fetchUserDataAndDisplay(user, role) {
   }
 }
 
-// LOGOUT FUNCTION - Made global and accessible
+// LOGOUT FUNCTION
 function handleLogout() {
   auth
     .signOut()
     .then(() => {
       console.log("User logged out successfully");
-      window.location.href = "index.html"; // Changed from landing.html to index.html
+      window.location.href = "index.html";
     })
     .catch((error) => {
       console.error("Logout Error:", error.message);
@@ -97,9 +94,9 @@ function handleLogout() {
     });
 }
 
-// DOM CONTENT LOADED (All logic executes after HTML is ready)
+// DOM CONTENT LOADED
 document.addEventListener("DOMContentLoaded", () => {
-  // Role Selection Handler (Common for Login and Signup)
+  // Role Selection Handler
   document.querySelectorAll(".role-btn").forEach((button) => {
     button.addEventListener("click", (e) => {
       document
@@ -133,7 +130,6 @@ document.addEventListener("DOMContentLoaded", () => {
         );
         const user = userCredential.user;
 
-        // Store user data in the SPECIFIC COLLECTION (landlords or tenants)
         await db.collection(collectionName).doc(user.uid).set({
           name: name,
           email: email,
@@ -171,11 +167,9 @@ document.addEventListener("DOMContentLoaded", () => {
         );
         const user = userCredential.user;
 
-        // Check for user document in the selected collection
         const userDoc = await db.collection(collectionName).doc(user.uid).get();
 
         if (!userDoc.exists) {
-          // Log out if user is not in the selected role's collection
           await auth.signOut();
           alert(
             `Access Denied! You are not registered as a ${selectedRole} in our records. Please try logging in with the other role option or contact support.`
@@ -192,57 +186,44 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Logout logic - Attach to logout button
+  // Logout logic
   const logoutBtn = document.getElementById("logout-btn");
   if (logoutBtn) {
-    // Remove any existing listeners and add new one
-    logoutBtn.onclick = null; // Clear inline onclick if any
     logoutBtn.addEventListener("click", (e) => {
       e.preventDefault();
       handleLogout();
     });
-    console.log("Logout button listener attached successfully");
   }
 
-  // Auth state observer (protection for dashboards)
+  // Auth state observer
   auth.onAuthStateChanged((user) => {
     const currentPage = window.location.pathname.split("/").pop();
 
     if (user) {
-      // Check BOTH collections to find the role
       const checkLandlord = db.collection("landlords").doc(user.uid).get();
       const checkTenant = db.collection("tenants").doc(user.uid).get();
 
       Promise.all([checkLandlord, checkTenant]).then(
         ([landlordDoc, tenantDoc]) => {
           let role = null;
-          let userDoc = null;
 
           if (landlordDoc.exists) {
             role = "landlord";
-            userDoc = landlordDoc;
           } else if (tenantDoc.exists) {
             role = "tenant";
-            userDoc = tenantDoc;
           }
 
           if (role) {
             const expectedDashboard =
               role === "landlord" ? LANDLORD_DASHBOARD : TENANT_DASHBOARD;
 
-            // If the user is on their correct dashboard, fetch and display data
             if (currentPage === expectedDashboard) {
-              // Now passes the correct role and user object
               fetchUserDataAndDisplay(user, role);
             }
 
-            // Redirect logged-in users away from auth pages
             if (currentPage === "login.html" || currentPage === "signup.html") {
               window.location.href = expectedDashboard;
-            }
-
-            // Redirect users if they are on the WRONG dashboard
-            else if (
+            } else if (
               currentPage !== expectedDashboard &&
               (currentPage === LANDLORD_DASHBOARD ||
                 currentPage === TENANT_DASHBOARD)
@@ -250,13 +231,11 @@ document.addEventListener("DOMContentLoaded", () => {
               window.location.href = expectedDashboard;
             }
           } else {
-            // User exists in Auth but not in either collection - force logout
             auth.signOut();
           }
         }
       );
     } else {
-      // User is signed out. If they are on a dashboard, redirect to login.
       if (
         currentPage === LANDLORD_DASHBOARD ||
         currentPage === TENANT_DASHBOARD
